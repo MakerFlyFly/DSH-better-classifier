@@ -21,13 +21,16 @@ it('boots the actual installed bundle and retains its metadata across a Host res
     if (child.status !== 0) throw new Error((child.stdout + child.stderr).replace(/token=\S+/g, 'token=[redacted]'))
   }
   cli(['--profile', 'web', '--dump-config'])
-  const packageSpec = process.env.BETTER_CLASSIFIER_TEST_TARBALL ?? join(root, `dist/${name}-${version}.tgz`)
+  const archive = process.env.BETTER_CLASSIFIER_TEST_TARBALL ?? join(root, `dist/${name}-${version}.tgz`)
+  const packageSpec = process.env.BETTER_CLASSIFIER_TEST_INSTALL_SPEC ?? archive
   cli(['plugin', '--profile', 'web', 'add', packageSpec])
-  if (process.env.BETTER_CLASSIFIER_TEST_TARBALL) {
-    const installed = await realpath(join(env.DSH_HOME, 'profiles/web/node_modules/dsh-better-classifier'))
-    expect(installed).not.toBe(await realpath(root))
-    expect(await readFile(join(installed, 'lib/client.js'), 'utf8')).toBe(await readFile(join(root, 'lib/client.js'), 'utf8'))
-  }
+  const installed = await realpath(join(env.DSH_HOME, 'profiles/web/node_modules/dsh-better-classifier'))
+  expect(installed).not.toBe(await realpath(root))
+  // External CI artifacts need not be byte-identical to a local rebuild (paths/CSS export order).
+  // Verify installation against the archive itself, including for registry-based installation.
+  const packedClient = spawnSync('tar', ['-xOf', archive, 'package/lib/client.js'], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024, windowsHide: true })
+  expect(packedClient.status, packedClient.stderr).toBe(0)
+  expect(await readFile(join(installed, 'lib/client.js'), 'utf8')).toBe(packedClient.stdout)
   const report = join(temp, 'report.json')
   const overlay = join(temp, 'fixture.patch.yml')
   await writeFile(overlay, JSON.stringify([

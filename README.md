@@ -47,7 +47,7 @@ Classification data remains in the configured DSH storage backend (by default `s
 
 ## Development and verification
 
-All build dependencies come from npm. No DSH source checkout, local symlink, or fixed machine path is needed.
+Build dependencies come from npm; the Loader regression also uses the system `tar` utility. No DSH source checkout, local symlink, or fixed machine path is needed.
 
 ```sh
 corepack pnpm install --frozen-lockfile --ignore-scripts

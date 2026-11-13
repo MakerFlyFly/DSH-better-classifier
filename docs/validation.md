@@ -6,6 +6,7 @@ Validated on 2026-11-13 using Windows x64, Node.js 24.14.0, pnpm 11.28.5, and th
 
 - Host and Client build, TypeScript checks, and 58 tests covering classification rules, tag drafts, search, lifecycle, persistence, conflicts, failed writes, and immutable publish-tag guards.
 - The real CLI/Loader installs the packed archive, starts the Host twice, and uninstalls/reinstalls the plugin between starts while retaining metadata.
+- The archive downloaded from GitHub Release has the same SHA-256 as the successful CI artifact. Its installed Client is checked against the archive itself, and clean install/uninstall/reinstall passed. Local rebuilds may differ in build-path comments and CSS-map property order, so they are not used as a byte-equality reference for an external CI artifact.
 - Stock SQLite body search respects candidate IDs and permissions before the result limit. Cases cover a matching session beyond 25 excluded matches, duplicate/forged hits, cancellation, and repeated cursor rejection.
 - Real SlotRegistry tests check native callback/store sharing, late contributions, unloading, re-enabling, and native-owner replacement.
 - A fresh source-archive extraction installs locked npm dependencies and builds without a DSH checkout or development symlinks.

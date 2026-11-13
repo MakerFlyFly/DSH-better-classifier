@@ -47,7 +47,7 @@ dsh plugin --profile web remove dsh-better-classifier
 
 ## 开发与验证
 
-依赖均从 npm 安装，不需要本机 DSH 源码、目录链接或固定机器路径。
+构建依赖从 npm 安装，Loader 回归还会使用系统 `tar` 工具；不需要本机 DSH 源码、目录链接或固定机器路径。
 
 ```powershell
 corepack pnpm install --frozen-lockfile --ignore-scripts

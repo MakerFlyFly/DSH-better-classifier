@@ -27,7 +27,7 @@ async function directory(path) {
   }
 }
 for (const path of ['src', 'scripts', 'tests', 'locale', 'detail', 'docs', '.github']) await directory(path)
-for (const path of ['README.md', 'README_ZH.md', 'CHANGELOG.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'icon.svg', 'package.json', 'pnpm-lock.yaml', 'compatibility.json', 'cordis.patch.yml', '.gitignore', '.gitattributes',
+for (const path of ['README.md', 'README_ZH.md', 'CHANGELOG.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'icon.svg', 'screenshots.json', 'package.json', 'pnpm-lock.yaml', 'compatibility.json', 'cordis.patch.yml', '.gitignore', '.gitattributes',
   'tsconfig.json', 'tsconfig.base.json', 'tsconfig.host.json', 'tsconfig.client.json', 'vitest.config.ts']) await include(path)
 const sourceZip = `DSH-better-classifier-${version}-source.zip`
 const compatibilityFile = `compatibility-${version}.json`
