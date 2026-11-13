@@ -1,0 +1,13 @@
+{
+  "storageVersion": 1,
+  "adapterCommit": "e8f7b93a344964de3dca1ace9e72b6e4d6de87cb",
+  "dshVersion": "0.2.2-rc.2",
+  "sidebarSlot": "sidebar.workspaces",
+  "storageDomain": "better_classifier",
+  "requiresPatch": false,
+  "adapterSource": "https://github.com/deepseek-ai/deepseek-harness",
+  "pnpm": "11.28.5",
+  "node": ">=24.9.0",
+  "testedPlatform": "win32-x64",
+  "pluginVersion": "0.2.0"
+}

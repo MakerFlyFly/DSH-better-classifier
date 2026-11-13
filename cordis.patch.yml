@@ -1,0 +1,7 @@
+- id: session-query-sqlite
+  config:
+    path: !!js dshHomePath('storages', 'better_classifier_search.sqlite')
+    openAt: first-search
+- insert:
+    - id: better-classifier
+      name: dsh-better-classifier

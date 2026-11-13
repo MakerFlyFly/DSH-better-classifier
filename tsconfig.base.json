@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ES2023", "module": "NodeNext", "moduleResolution": "NodeNext",
+    "strict": true, "noUnusedLocals": true, "noUnusedParameters": true, "skipLibCheck": true, "verbatimModuleSyntax": true,
+    "rewriteRelativeImportExtensions": true, "declaration": true, "declarationMap": true,
+    "composite": true, "jsx": "react-jsx", "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "rootDir": "src", "outDir": "lib/types"
+  }
+}

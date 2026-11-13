@@ -1,0 +1,45 @@
+name: npm publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Validate the package without publishing
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DSH_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.14.0
+          registry-url: https://registry.npmjs.org
+      - name: Require matching release tag for a real publish
+        if: inputs.dry_run == false
+        run: node scripts/check-publish-ref.mjs
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm build
+      - run: pnpm typecheck
+      - run: pnpm package
+      - run: pnpm test
+      - name: Dry run
+        if: inputs.dry_run != false
+        run: npm publish --dry-run --ignore-scripts --access public
+      - name: Publish the verified tarball using npm trusted publishing
+        if: inputs.dry_run == false
+        run: node scripts/publish-npm.mjs
