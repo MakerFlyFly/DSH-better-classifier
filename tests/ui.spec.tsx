@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { useSyncExternalStore } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
@@ -14,9 +14,12 @@ import type { DataState, InteractionState } from '../src/client/controller.ts'
 import type { EditorProps, TreeProps } from '../src/client/contract.ts'
 import type { WorkspaceProjectRowOwner, WorkspaceSessionRowOwner } from '../src/client/compat/contract/browser.ts'
 import type { TagLayout } from '../src/client/tag-layout.ts'
+import type { AdapterState } from '../src/client/compat/install.ts'
 import type { ClassifierCommand } from '../src/types.ts'
+import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import { SessionNodeItem } from '../src/client/compat/rows/Rows.tsx'
 
-afterEach(() => { cleanup(); localStorage.clear(); vi.useRealTimers() })
+afterEach(() => { cleanup(); localStorage.clear(); vi.useRealTimers(); vi.unstubAllGlobals() })
 function bind<T>(source: { getSnapshot(): T; subscribe(listener: () => void): () => void }) {
   return <S,>(selector: (value: T) => S): S => selector(useSyncExternalStore(source.subscribe, source.getSnapshot, source.getSnapshot))
 }
@@ -28,6 +31,7 @@ function fixture() {
   state.assignments = [{ target: { kind: 'folder', id: 'outer' }, tagIds: ['one', 'two', 'three'] }]
   const data = createSnapshotStore<DataState>({ phase: 'ready', state })
   const interaction = createSnapshotStore<InteractionState>({ drag: [], editor: null, busy: false, notice: null, noticeSeq: 0 })
+  const adapter = createSnapshotStore<AdapterState>({ phase: 'ready' })
   const view = createClassifierViewStore().create()
   const mutate = vi.fn(async (_commands: ClassifierCommand[], _revision?: number) => true)
   const layout = createSnapshotStore<Record<string, TagLayout>>({})
@@ -36,7 +40,7 @@ function fixture() {
   })
   const backgroundMouse = vi.fn(), backgroundKey = vi.fn()
   const props = {
-    useClassifier: bind(data), useInteraction: bind(interaction), useStore: bind(view), actions: view.actions,
+    useClassifier: bind(data), useInteraction: bind(interaction), useAdapter: bind(adapter), useStore: bind(view), actions: view.actions,
     useTagLayout: bind(layout), measureTags,
     t: (key: keyof typeof zh, values?: Record<string, string | number>) => Object.entries(values ?? {}).reduce((text, [name, value]) => text.replaceAll('{' + name + '}', String(value)), zh[key] as string),
     edit: vi.fn(), closeEditor: vi.fn(), notice: vi.fn(), refresh: vi.fn(), mutate, drag: vi.fn(), searchContent: vi.fn(),
@@ -45,7 +49,7 @@ function fixture() {
     useWorkspaces: (select: (value: object) => unknown) => select({ items: [{ workspaceId: 'p', title: 'DSH', sessionIds: ['s'] }] }),
     useSessions: (select: (value: object) => unknown) => select({ ids: ['s'], byId: { s: { displayTitle: '搜索优化' } } }),
   } as EditorProps
-  return { props, data, interaction, view, mutate, layout, backgroundMouse, backgroundKey }
+  return { props, data, interaction, adapter, view, mutate, layout, backgroundMouse, backgroundKey }
 }
 
 describe('single-item dragging', () => {
@@ -125,7 +129,7 @@ describe('tag interaction', () => {
     const h = fixture()
     h.interaction.update(value => { value.editor = { kind: 'tags', targets: [{ kind: 'session', id: 's' }], revision: 0 } })
     render(<ClassifierEditors {...h.props} />)
-    fireEvent.click(screen.getByRole('button', { name: '添加标签', exact: true }))
+    fireEvent.click(screen.getByRole('button', { name: '添加标签' }))
     fireEvent.change(screen.getByLabelText('标签名称'), { target: { value: '研究' } })
     fireEvent.change(screen.getByLabelText('十六进制颜色'), { target: { value: '#oops' } })
     expect((screen.getByRole('button', { name: '完成' }) as HTMLButtonElement).disabled).toBe(true)
@@ -154,9 +158,18 @@ function openAssignments(h: ReturnType<typeof fixture>, targets = [{ kind: 'sess
   h.interaction.update(value => { value.editor = { kind: 'tags', targets, revision: 0 } })
   return render(<ClassifierEditors {...h.props} />)
 }
-function back() { fireEvent.click(screen.getAllByRole('button', { name: '返回', exact: true }).at(-1)!) }
+function back() { fireEvent.click(screen.getAllByRole('button', { name: '返回' }).at(-1)!) }
 
 describe('tag editor draft pages', () => {
+  it('does not dirty an unchanged tag definition', () => {
+    const h = fixture()
+    h.data.update(value => { value.state!.assignments.push({ target: { kind: 'session', id: 's' }, tagIds: ['one'] }) })
+    openAssignments(h)
+    fireEvent.click(screen.getByRole('button', { name: '修改标签 重点' }))
+    fireEvent.click(screen.getByRole('button', { name: '完成' }))
+    expect((screen.getByRole('button', { name: '保存' }) as HTMLButtonElement).disabled).toBe(true)
+    expect(h.mutate).not.toHaveBeenCalled()
+  })
   it('moves chips between assigned and available groups in one page until save', () => {
     const h = fixture()
     h.data.update(value => { value.state!.assignments.push({ target: { kind: 'session', id: 's' }, tagIds: ['one'] }) })
@@ -169,13 +182,13 @@ describe('tag editor draft pages', () => {
     expect(assigned.queryByRole('button', { name: '修改标签 开发' })).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: '移除标签 重点' }))
     expect(h.mutate).not.toHaveBeenCalled()
-    expect(document.activeElement).toBe(screen.getByRole('button', { name: '添加标签', exact: true }))
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: '添加标签' }))
     expect(screen.getByRole('button', { name: '添加标签 重点' })).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: '添加标签 开发' }))
     expect(screen.queryByRole('button', { name: '添加标签 开发' })).toBeNull()
     expect(document.activeElement).toBe(screen.getByRole('button', { name: '添加标签 待审阅' }))
     fireEvent.click(screen.getByRole('button', { name: '添加标签 待审阅' }))
-    expect(screen.getByRole('dialog', { name: '编辑标签', exact: true })).toBeTruthy()
+    expect(screen.getByRole('dialog', { name: '编辑标签' })).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: '保存' }))
     expect(h.mutate).toHaveBeenCalledWith([{ kind: 'tags.assign', targets: [{ kind: 'session', id: 's' }], add: ['two', 'three'], remove: ['one'] }], 0)
     expect(h.data.getSnapshot().state!.assignments.at(-1)!.tagIds).toEqual(['one'])
@@ -184,11 +197,11 @@ describe('tag editor draft pages', () => {
   it('retains definition input across back, creates and selects atomically, and cancel writes nothing', () => {
     const h = fixture()
     openAssignments(h)
-    fireEvent.click(screen.getByRole('button', { name: '添加标签', exact: true }))
+    fireEvent.click(screen.getByRole('button', { name: '添加标签' }))
     fireEvent.change(screen.getByLabelText('标签名称'), { target: { value: '新研究' } })
     fireEvent.change(screen.getByLabelText('十六进制颜色'), { target: { value: '#4D6BFE' } })
     back()
-    fireEvent.click(screen.getByRole('button', { name: '添加标签', exact: true }))
+    fireEvent.click(screen.getByRole('button', { name: '添加标签' }))
     expect((screen.getByLabelText('标签名称') as HTMLInputElement).value).toBe('新研究')
     fireEvent.click(screen.getByRole('button', { name: '完成' }))
     expect(screen.queryByRole('button', { name: '添加标签 新研究' })).toBeNull()
@@ -231,7 +244,7 @@ describe('tag editor draft pages', () => {
     const h = fixture()
     h.interaction.update(value => { value.editor = { kind: 'tags', targets: [{ kind: 'folder', id: 'outer' }], revision: 0 } })
     render(<ClassifierEditors {...h.props} />)
-    fireEvent.click(screen.getByRole('button', { name: '添加标签', exact: true }))
+    fireEvent.click(screen.getByRole('button', { name: '添加标签' }))
     fireEvent.change(screen.getByLabelText('标签名称'), { target: { value: '重点' } })
     fireEvent.click(screen.getByRole('button', { name: '完成' }))
     expect(screen.getByRole('alert').textContent).toContain('名称已存在')
@@ -239,6 +252,40 @@ describe('tag editor draft pages', () => {
     fireEvent.click(screen.getByRole('button', { name: '修改标签 重点' }))
     expect(screen.queryByRole('button', { name: '删除标签' })).toBeNull()
     expect(screen.queryByRole('button', { name: '管理标签' })).toBeNull()
+    expect(h.mutate).not.toHaveBeenCalled()
+  })
+})
+
+describe('editor recovery', () => {
+  it('retains a folder draft through a write failure and retries with its opening revision', async () => {
+    const h = fixture()
+    h.interaction.update(value => { value.editor = { kind: 'folder.create', scope: { kind: 'global' }, parentId: null, revision: 0 } })
+    h.mutate.mockImplementationOnce(async () => { h.data.update(value => { value.phase = 'error' }); return false })
+    h.props.refresh = vi.fn(async () => { h.data.update(value => { value.phase = 'ready'; value.state!.revision = 4 }) })
+    render(<ClassifierEditors {...h.props} />)
+    fireEvent.change(screen.getByLabelText('文件夹名称'), { target: { value: '保留草稿' } })
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: '保存' })) })
+    expect((screen.getByRole('button', { name: '保存' }) as HTMLButtonElement).disabled).toBe(true)
+    expect((screen.getByLabelText('文件夹名称') as HTMLInputElement).value).toBe('保留草稿')
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: '重试' })) })
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: '保存' })) })
+    expect(h.mutate.mock.calls.map(([, revision]) => revision)).toEqual([0, 0])
+    expect(h.mutate.mock.calls[1]?.[0]).toEqual([expect.objectContaining({ name: '保留草稿' })])
+    expect(h.props.closeEditor).not.toHaveBeenCalled()
+  })
+  it.each(['folder', 'tags'])('preserves %s drafts but blocks Save during adapter fallback', kind => {
+    const h = fixture()
+    if (kind === 'folder') h.interaction.update(value => { value.editor = { kind: 'folder.create', scope: { kind: 'global' }, parentId: null, revision: 0 } })
+    else h.interaction.update(value => { value.editor = { kind: 'tags', targets: [{ kind: 'session', id: 's' }], revision: 0 } })
+    render(<ClassifierEditors {...h.props} />)
+    if (kind === 'folder') fireEvent.change(screen.getByLabelText('文件夹名称'), { target: { value: '草稿' } })
+    else fireEvent.click(screen.getByRole('button', { name: '添加标签 重点' }))
+    act(() => { h.adapter.set({ phase: 'fallback' }) })
+    expect((screen.getByRole('button', { name: '保存' }) as HTMLButtonElement).disabled).toBe(true)
+    if (kind === 'folder') expect((screen.getByLabelText('文件夹名称') as HTMLInputElement).value).toBe('草稿')
+    else expect(screen.getByRole('button', { name: '修改标签 重点' })).toBeTruthy()
+    act(() => { h.adapter.set({ phase: 'ready' }) })
+    expect((screen.getByRole('button', { name: '保存' }) as HTMLButtonElement).disabled).toBe(false)
     expect(h.mutate).not.toHaveBeenCalled()
   })
 })
@@ -263,6 +310,43 @@ function searchableTree(h: ReturnType<typeof fixture>, query: string): TreeProps
 }
 
 describe('collapsed search navigation', () => {
+  it.each([false, true])('opens a search hit, reveals its normal directory and invokes the native scroll effect (ungrouped=%s)', async ungrouped => {
+    vi.stubGlobal('ResizeObserver', class { observe() {} unobserve() {} disconnect() {} })
+    const previous = HTMLElement.prototype.scrollIntoView
+    const scroll = vi.fn()
+    HTMLElement.prototype.scrollIntoView = scroll
+    const h = fixture()
+    h.view.actions.expand('ungrouped', false)
+    h.view.actions.expand('folder:outer', false)
+    h.view.actions.expand('project:p', false)
+    const acknowledged = vi.fn()
+    const base = searchableTree(h, '搜索优化')
+    function Browser() {
+      const [query, setQuery] = useState('搜索优化')
+      const [pending, setPending] = useState<SessionId>()
+      return <ClassifierTreeView {...base} query={query} setQuery={setQuery} workspaces={ungrouped ? [] : base.workspaces}
+        revealSessionId={pending} onSessionRevealed={id => { acknowledged(id); setPending(undefined) }}
+        openSession={id => { setPending(id); setQuery('') }}
+        renderFactorySlot={((name: string, owner: object) => {
+          if (name !== 'betterClassifier.sessionRow') {
+            const row = owner as WorkspaceProjectRowOwner
+            return <div role="treeitem" aria-expanded={row.group.expanded} onClick={row.onToggle}>{row.group.label || '未分组'}</div>
+          }
+          const row = owner as WorkspaceSessionRowOwner
+          return <SessionNodeItem {...row} onRenameRequest={() => {}} renderSlot={() => null} renderFactorySlot={() => null}
+            useContextMenu={() => ({ getTriggerProps: () => ({}) } as never)} useContextMenuTarget={select => select(null)} useSessionAccess={() => true} t={key => key} />
+        }) as TreeProps['renderFactorySlot']} />
+    }
+    try {
+      render(<Browser />)
+      expect(scroll).not.toHaveBeenCalled()
+      await act(async () => { fireEvent.click(screen.getByRole('treeitem', { name: /^搜索优化/ })) })
+      expect(screen.getByRole('treeitem', { name: /^搜索优化/ })).toBeTruthy()
+      expect(scroll).toHaveBeenCalledWith({ block: 'nearest' })
+      expect(acknowledged).toHaveBeenCalledWith('s')
+      expect(h.view.getSnapshot().expanded[ungrouped ? 'ungrouped' : 'project:p']).toBe(true)
+    } finally { cleanup(); HTMLElement.prototype.scrollIntoView = previous }
+  })
   it('accepts background gestures inside a sidebar drawer while excluding portaled row menus', () => {
     const h = fixture()
     render(<div role="dialog" aria-label="Sidebar drawer"><ClassifierTreeView {...searchableTree(h, '')} /></div>)
@@ -278,7 +362,7 @@ describe('collapsed search navigation', () => {
     localStorage.setItem('dsh.better-classifier.view.v1', JSON.stringify({ expanded, showTags: false, tagIds: ['missing'], tagMode: 'all', scope: { kind: 'folder', id: 'missing' } }))
     const h = fixture()
     render(<ClassifierTreeView {...searchableTree(h, '')} />)
-    expect(screen.getByRole('treeitem', { name: '搜索优化', exact: true })).toBeTruthy()
+    expect(screen.getByRole('treeitem', { name: '搜索优化' })).toBeTruthy()
     expect(screen.getByRole('button', { name: '编辑标签: 重点' })).toBeTruthy()
     expect(h.view.getSnapshot().expanded).toEqual(expanded)
     expect(screen.queryByText('自定义分类')).toBeNull()
@@ -314,23 +398,23 @@ describe('collapsed search navigation', () => {
     const props = searchableTree(h, '工作')
     const view = render(<ClassifierTreeView {...props} />)
     expect(screen.getByRole('treeitem', { name: /^工作/ }).getAttribute('aria-expanded')).toBe('false')
-    expect(screen.queryByRole('treeitem', { name: 'DSH', exact: true })).toBeNull()
+    expect(screen.queryByRole('treeitem', { name: 'DSH' })).toBeNull()
     fireEvent.click(screen.getByRole('treeitem', { name: /^工作/ }))
-    expect(screen.getByRole('treeitem', { name: 'DSH', exact: true }).getAttribute('aria-expanded')).toBe('false')
-    fireEvent.click(screen.getByRole('treeitem', { name: 'DSH', exact: true }))
+    expect(screen.getByRole('treeitem', { name: 'DSH' }).getAttribute('aria-expanded')).toBe('false')
+    fireEvent.click(screen.getByRole('treeitem', { name: 'DSH' }))
     expect(screen.getByRole('treeitem', { name: /^插件/ }).getAttribute('aria-expanded')).toBe('false')
     fireEvent.click(screen.getByRole('treeitem', { name: /^插件/ }))
-    expect(screen.getByRole('treeitem', { name: '搜索优化', exact: true })).toBeTruthy()
+    expect(screen.getByRole('treeitem', { name: '搜索优化' })).toBeTruthy()
     expect(h.view.getSnapshot().expanded).toEqual(before)
     expect(props.searchContent).not.toHaveBeenCalled()
     view.rerender(<ClassifierTreeView {...props} archivedFilter="show" />)
     expect(screen.getByRole('treeitem', { name: /^工作/ }).getAttribute('aria-expanded')).toBe('false')
     view.rerender(<ClassifierTreeView {...props} query="搜索优化" />)
-    expect(screen.getByRole('treeitem', { name: '搜索优化', exact: true })).toBeTruthy()
+    expect(screen.getByRole('treeitem', { name: '搜索优化' })).toBeTruthy()
     expect(screen.getByRole('treeitem', { name: /^工作/ }).getAttribute('aria-expanded')).toBe('true')
     view.rerender(<ClassifierTreeView {...props} query="" />)
     expect(screen.getByRole('treeitem', { name: /^工作/ }).getAttribute('aria-expanded')).toBe('false')
-    expect(screen.queryByRole('treeitem', { name: 'DSH', exact: true })).toBeNull()
+    expect(screen.queryByRole('treeitem', { name: 'DSH' })).toBeNull()
     expect(h.view.getSnapshot().expanded).toEqual(before)
   })
 
@@ -361,12 +445,12 @@ describe('collapsed search navigation', () => {
     const props = { ...searchableTree(h, '正文词'), searchContent }
     const view = render(<ClassifierTreeView {...props} />)
     await act(async () => { await vi.advanceTimersByTimeAsync(250) })
-    expect(screen.getByRole('treeitem', { name: '搜索优化', exact: true })).toBeTruthy()
+    expect(screen.getByRole('treeitem', { name: '搜索优化' })).toBeTruthy()
     expect(screen.getByText('正文摘要')).toBeTruthy()
     expect(screen.getByRole('treeitem', { name: /^工作/ }).getAttribute('aria-expanded')).toBe('true')
     view.rerender(<ClassifierTreeView {...props} query="搜索优化" searchContent={async () => { throw new Error('index offline') }} />)
     await act(async () => { await vi.advanceTimersByTimeAsync(250) })
-    expect(screen.getByRole('treeitem', { name: '搜索优化', exact: true })).toBeTruthy()
+    expect(screen.getByRole('treeitem', { name: '搜索优化' })).toBeTruthy()
     expect(screen.getByText('正文搜索暂不可用')).toBeTruthy()
   })
 })

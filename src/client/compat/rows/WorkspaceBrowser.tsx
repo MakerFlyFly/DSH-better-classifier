@@ -1234,7 +1234,7 @@ export function WorkspaceBrowser({
     },
     orderBy, setOrderBy: (value) => { actions.setOrderBy(value, activeSessionOrders) },
     archivedFilter, workspaces, sessionRows: extensionRows, ready: workspaceReady && list.phase === 'ready',
-    home, currentId: mainSessionId,
+    home, currentId: mainSessionId, revealSessionId, onSessionRevealed: acknowledgeSessionReveal,
     openSession: normalizedQuery === '' ? guardedOpen : openSearchResult,
     startSession, resultLimit: searchResultLimit,
   }

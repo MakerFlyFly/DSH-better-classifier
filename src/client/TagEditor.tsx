@@ -20,6 +20,7 @@ export function TagEditorDialog(props: EditorProps & { editor: TagEditor; state:
   const { t, editor } = props
   const interaction = props.useInteraction(value => value)
   const phase = props.useClassifier(value => value.phase)
+  const adapterReady = props.useAdapter(value => value.phase === 'ready')
   const projects = props.useWorkspaces(value => value.items)
   const sessionIds = props.useSessions(value => value.ids)
   const catalog = useMemo(() => ({ projects: projects.map(project => ({ id: project.workspaceId, sessionIds: [...project.sessionIds] })), sessionIds: [...sessionIds] }), [projects, sessionIds])
@@ -33,7 +34,7 @@ export function TagEditorDialog(props: EditorProps & { editor: TagEditor; state:
   const form = page.kind === 'definition' ? fields[page.key]! : null
   const commands = tagDraftCommands(draft, targets)
   const rootPage = page.kind === 'assigned'
-  const blocked = interaction.busy || interaction.notice === 'conflict' || phase !== 'ready'
+  const blocked = interaction.busy || interaction.notice === 'conflict' || phase !== 'ready' || !adapterReady
   const validColor = form !== null && /^#[\da-fA-F]{6}$/.test(form.color)
   const validForm = form !== null && form.name.trim().length > 0 && validColor
   const state = draft.state
@@ -55,6 +56,10 @@ export function TagEditorDialog(props: EditorProps & { editor: TagEditor; state:
   }
   const finishDefinition = (): void => {
     if (page.kind !== 'definition' || !form || !validForm || interaction.busy) return
+    const existing = draft.state.tags.find(tag => tag.id === form.id)
+    if (!form.creating && existing && form.name.trim() === existing.name && form.color.toUpperCase() === existing.color.toUpperCase()) {
+      navigate({ kind: 'assigned' }); return
+    }
     const changes: ClassifierCommand[] = [{ kind: form.creating ? 'tag.create' : 'tag.update', id: form.id, name: form.name, color: form.color }]
     if (form.creating && targets.length) changes.push({ kind: 'tags.assign', targets, add: [form.id], remove: [] })
     if (!stage(changes)) return

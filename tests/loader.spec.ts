@@ -6,6 +6,7 @@ import { spawn, spawnSync } from 'node:child_process'
 import { once } from 'node:events'
 import { createServer } from 'node:net'
 import { expect, it } from 'vitest'
+import { isolateFixture } from '../scripts/fixture-module.mjs'
 
 it('boots the actual installed bundle and retains its metadata across a Host restart', async () => {
   const root = resolve(import.meta.dirname, '..')
@@ -35,7 +36,7 @@ it('boots the actual installed bundle and retains its metadata across a Host res
   const overlay = join(temp, 'fixture.patch.yml')
   await writeFile(overlay, JSON.stringify([
     { id: 'workspace-controller', config: { documentsDirectory: join(temp, 'projects') } },
-    { insert: [{ id: 'classifier-fixture', name: join(root, 'tests/fixtures/seed.ts'), config: { root: join(temp, 'projects'), report, verify: true } }] },
+    { insert: [{ id: 'classifier-fixture', name: await isolateFixture(join(root, 'tests/fixtures/seed.ts'), join(temp, 'fixture-module')), config: { root: join(temp, 'projects'), report, verify: true } }] },
   ]))
   const portOwner = createServer(); portOwner.listen(0, '127.0.0.1'); await once(portOwner, 'listening')
   const address = portOwner.address(); if (!address || typeof address === 'string') throw new Error('Missing test port')

@@ -7,7 +7,8 @@ import { createUserMessage } from '@deepseek-ai/dsh-llm'
 import type {} from '@deepseek-ai/dsh-session-title'
 import type {} from '@deepseek-ai/dsh-session-persistence'
 import type {} from '@deepseek-ai/dsh-api-session-controller'
-import type {} from '../../src/index.ts'
+import type {} from '@deepseek-ai/dsh-workspace'
+import type {} from 'dsh-better-classifier'
 import type { ClassifierCommand } from '../../src/types.ts'
 
 export const name = 'better-classifier-fixture'
@@ -52,7 +53,6 @@ export async function apply(ctx: Context, config: { root: string; report: string
       const mutate = async (commands: ClassifierCommand[]) => {
         const before = await ctx.betterClassifier.snapshot()
         const result = await ctx.betterClassifier.apply({ expectedRevision: before.revision, commands })
-        assert.equal(result.ok, true)
         if (!result.ok) throw new Error(result.code)
         return result.state
       }

@@ -28,6 +28,8 @@ function FolderEditorDialog(props: EditorProps & { editor: Exclude<Editor, null 
   const { editor, state, t } = props
   const interaction = props.useInteraction(value => value)
   const projects = props.useWorkspaces(value => value.items)
+  const phase = props.useClassifier(value => value.phase)
+  const adapterReady = props.useAdapter(value => value.phase === 'ready')
   const sessions = props.useSessions(value => value)
   const folder = 'id' in editor ? state.folders.find(item => item.id === editor.id) : undefined
   const [name, setName] = useState(folder?.name ?? '')
@@ -44,7 +46,8 @@ function FolderEditorDialog(props: EditorProps & { editor: Exclude<Editor, null 
     ...state.folders.map(item => ({ container: { kind: 'folder' as const, id: item.id }, label: folderPath(item.id, state, projects.map(project => ({ id: project.workspaceId, title: project.title }))) })),
   ].filter(choice => editor.kind !== 'move' || reduceMutation(state, { expectedRevision: state.revision, commands: [{ kind: 'entities.move', targets, destination: choice.container }] }, catalog).ok)
   const title = editor.kind === 'folder.create' ? t('newFolder') : editor.kind === 'folder.rename' ? t('rename') : editor.kind === 'folder.delete' ? t('delete') : t('move')
-  const invalid = (editor.kind === 'folder.create' || editor.kind === 'folder.rename') && !name.trim()
+  const invalid = (editor.kind === 'folder.create' || editor.kind === 'folder.rename') && (!name.trim() || (editor.kind === 'folder.rename' && name.trim() === folder?.name))
+  const blocked = interaction.busy || phase !== 'ready' || !adapterReady
   const conflict = interaction.notice === 'conflict'
   const submit = (): void => {
     let commands: ClassifierCommand[]
@@ -70,8 +73,8 @@ function FolderEditorDialog(props: EditorProps & { editor: Exclude<Editor, null 
   return <Modal open title={title} description={editor.kind === 'folder.delete' ? t('deleteDescription') : undefined} closeLabel={t('close')} onClose={props.closeEditor}
     className={css.editor} tone={editor.kind === 'folder.delete' ? 'warning' : undefined}
     footer={<div className={css.footer}><Button variant="ghost" disabled={interaction.busy} onClick={props.closeEditor}>{t('cancel')}</Button>
-      <Button variant="primary" disabled={interaction.busy || invalid || conflict || (editor.kind === 'move' && !destination)} onClick={submit}>{interaction.busy ? t('saving') : editor.kind === 'folder.delete' ? t('confirm') : t('save')}</Button></div>}>
-    <form onSubmit={event => { event.preventDefault(); if (!invalid && !interaction.busy && !conflict) submit() }} className={css.form}>
+      <Button variant="primary" disabled={blocked || invalid || conflict || (editor.kind === 'move' && !destination)} onClick={submit}>{interaction.busy ? t('saving') : editor.kind === 'folder.delete' ? t('confirm') : t('save')}</Button></div>}>
+    <form onSubmit={event => { event.preventDefault(); if (!invalid && !blocked && !conflict) submit() }} className={css.form}>
       {(editor.kind === 'folder.create' || editor.kind === 'folder.rename') && <label className={css.field}><span>{t('folderName')}</span>
         <Input value={name} onChange={event => { setName(event.target.value) }} maxLength={120} data-modal-autofocus disabled={interaction.busy} />
       </label>}
@@ -85,6 +88,9 @@ function FolderEditorDialog(props: EditorProps & { editor: Exclude<Editor, null 
       </>}
       {editor.kind === 'folder.delete' && <div className={css.deletionName}>{folder?.name ?? editor.id}</div>}
       {interaction.notice && interaction.notice !== 'saved' && <div className={css.error} role="alert">{t(interaction.notice)}</div>}
+      {phase !== 'ready' && <div className={css.error} role="status">{t(phase === 'offline' ? 'offline' : 'loadFailed')}
+        <Button size="sm" variant="ghost" disabled={interaction.busy} onClick={() => { props.notice(null); void props.refresh() }}>{t('retry')}</Button>
+      </div>}
     </form>
   </Modal>
 }

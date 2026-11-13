@@ -12,7 +12,7 @@ Organize projects and conversations into a clear folder tree, mark them with col
 
 ## Compatibility
 
-Version 0.2.0 is validated on Windows x64 with stock DSH 0.2.2-rc.2, without source patches. Restart DSH and refresh the browser after installing.
+Version 0.2.1 supports Windows x64 with stock DSH 0.2.2-rc.2, without source patches. Restart DSH and refresh the browser after installing.
 
 ## Data
 

@@ -87,7 +87,7 @@ function LoadedTree(props: TreeProps & { state: ClassifierState; phase: string }
   const search = projectSearch(state, tree, { query: props.query, content: currentContent.items, contentHasMore: currentContent.hasMore, limit: props.resultLimit })
   const sessions = new Map(props.sessionRows.map(row => [row.id as string, row]))
   const workspaces = new Map(props.workspaces.map(project => [project.workspaceId as string, project]))
-  const currentPath = props.currentId && tree.nodes.has('session:' + props.currentId) ? ancestorsOf(state, tree.catalog, { kind: 'session', id: props.currentId }).map(entityKey) : []
+  const currentPath = props.currentId && tree.nodes.has('session:' + props.currentId) ? ancestorsOf(state, tree.catalog, { kind: 'session', id: props.currentId }, tree.lookup).map(entityKey) : []
   const disabled = props.phase !== 'ready' || interaction.busy
 
   const expanded = (node: TreeNode, browsing: boolean): boolean => {
@@ -101,7 +101,8 @@ function LoadedTree(props: TreeProps & { state: ClassifierState; phase: string }
     else props.actions.expand(key, !expanded(node, browsing))
   }
   const openSession = (id: SessionId): void => {
-    props.actions.reveal(ancestorsOf(state, tree.catalog, { kind: 'session', id }).map(entityKey))
+    const path = ancestorsOf(state, tree.catalog, { kind: 'session', id }, tree.lookup).map(entityKey)
+    props.actions.reveal(path.length ? path : ['ungrouped'])
     props.openSession(id)
   }
   const dragStart = (ref: EntityRef): void => { props.drag([ref]) }
@@ -152,6 +153,7 @@ function LoadedTree(props: TreeProps & { state: ClassifierState; phase: string }
           {native ? props.renderFactorySlot('betterClassifier.sessionRow', {
             level: node.depth + (node.parent.kind === 'root' ? 2 : 1),
             node: native, currentId: conversationVisible ? props.currentId : undefined, now: Date.now(), onOpen: openSession, home: props.home,
+            onReveal: props.query === '' && props.revealSessionId === native.id ? () => { props.onSessionRevealed?.(native.id) } : undefined,
             drag: disabled || search.active ? undefined : { start: () => { dragStart(node.ref) }, end: dragEnd, active: false, marker: null, hover: () => {}, drop: () => {} },
           }) : project ? props.renderFactorySlot('betterClassifier.projectRow', {
             level: node.depth + 1,
@@ -213,7 +215,7 @@ function FolderRow(props: TreeProps & { node: TreeNode; tree: ClassifierTree; st
   const [open, setOpen] = useState(false)
   const { node, state, t } = props
   const folder = state.folders.find(item => item.id === node.ref.id)!
-  const fullPath = [...ancestorsOf(state, props.tree.catalog, node.ref).reverse().map(ref => props.tree.nodes.get(entityKey(ref))?.label ?? ref.id), node.label].join(' / ')
+  const fullPath = [...ancestorsOf(state, props.tree.catalog, node.ref, props.tree.lookup).reverse().map(ref => props.tree.nodes.get(entityKey(ref))?.label ?? ref.id), node.label].join(' / ')
   return <div className={css.folderRow} role="treeitem" aria-expanded={props.expanded} aria-level={node.depth + 1} tabIndex={0}
     onClick={props.toggle} onKeyDown={event => {
       if (event.target !== event.currentTarget || !['Enter', ' ', 'ArrowRight', 'ArrowLeft'].includes(event.key)) return

@@ -81,7 +81,7 @@ it('preserves search on cancel/failure, then exits search and focuses the persis
     return true
   })
   const shared = {
-    useClassifier: bind(h.data), useInteraction: bind(h.interaction), useStore: bind(view), actions: view.actions, t: h.t,
+    useClassifier: bind(h.data), useInteraction: bind(h.interaction), useAdapter: select => select({ phase: 'ready' }), useStore: bind(view), actions: view.actions, t: h.t,
     edit: h.controller.edit, closeEditor: () => { h.interaction.update(value => { value.editor = null }) }, notice: h.controller.notice,
     bindBackground: h.owner.bind, folderCreated: h.owner.created, mutate, refresh: vi.fn(), drag: vi.fn(),
     useTagLayout: () => undefined, measureTags: vi.fn(),

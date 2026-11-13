@@ -5,7 +5,7 @@ import { Context } from '@deepseek-ai/cordis'
 import Storage, { StorageError, type StorageBackend } from '@deepseek-ai/dsh-storage'
 import { DomainFacility } from '@deepseek-ai/dsh-storage-domain'
 import { JsonStorageBackend } from '@deepseek-ai/dsh-storage-json'
-import BetterClassifier from '../lib/index.js'
+import BetterClassifier from 'dsh-better-classifier'
 
 const cleanups: (() => Promise<void>)[] = []
 afterEach(async () => { for (const close of cleanups.splice(0)) await close() })
@@ -46,6 +46,19 @@ async function harness() {
 }
 
 describe('Host storage and subscription ownership', () => {
+  it('does not write or broadcast a no-op, and still checks its expected revision', async () => {
+    const h = await harness()
+    await h.service.apply({ expectedRevision: 0, commands: [{ kind: 'tag.create', id: 't', name: '重点', color: '#123456' }] })
+    const before = await readFile(join(h.root, 'better_classifier.json'))
+    const changes: unknown[] = []
+    h.ctx.on('domain/changed', event => { if (event.domain === 'better_classifier') changes.push(event) })
+    const commands = [{ kind: 'tag.update' as const, id: 't', name: '重点', color: '#123456' }]
+    h.fail(true)
+    expect(await h.service.apply({ expectedRevision: 1, commands })).toMatchObject({ ok: true, state: { revision: 1 } })
+    expect(await h.service.apply({ expectedRevision: 0, commands })).toMatchObject({ ok: false, code: 'conflict' })
+    expect(changes).toEqual([])
+    expect(await readFile(join(h.root, 'better_classifier.json'))).toEqual(before)
+  })
   it('publishes only after durable commit and preserves state on a storage write failure', async () => {
     const h = await harness()
     const changes: unknown[] = []

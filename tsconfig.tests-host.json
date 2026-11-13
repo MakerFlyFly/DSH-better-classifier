@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.host.json",
+  "compilerOptions": { "noEmit": true, "composite": false, "rootDir": ".", "types": ["node"], "allowJs": true },
+  "include": ["tests/host.spec.ts", "tests/domain.spec.ts", "tests/review-domain.spec.ts", "tests/search.spec.ts", "tests/loader.spec.ts", "tests/publish-ref.spec.ts", "tests/package.spec.ts", "tests/access.spec.ts", "tests/config.spec.ts", "tests/fixtures/**/*.ts"]
+}

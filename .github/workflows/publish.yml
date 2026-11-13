@@ -37,6 +37,13 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm package
       - run: pnpm test
+      - name: Upload verified release artifacts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: npm-release-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
       - name: Dry run
         if: inputs.dry_run != false
         run: npm publish --dry-run --ignore-scripts --access public

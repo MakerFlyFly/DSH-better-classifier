@@ -15,79 +15,120 @@ const aliases = [
   ['sidebar.session.row.hover', 'betterClassifier.session.row.hover'],
 ] as const
 
-/** Mirror supported child entries without moving or modifying the native registration. */
-function mirror(ctx: Context, source: typeof aliases[number][0], target: typeof aliases[number][1]): () => void {
+/** A fallback hides new classification actions without destroying an already open draft. */
+export interface AdapterState { phase: 'waiting' | 'ready' | 'fallback' }
+
+function mount(ctx: Context, native: StoredEntry, shared: WorkspaceBrowserInjected) {
   const copies = new Map<StoredEntry, () => void>()
-  let closed = false
   const sync = (): void => {
-    if (closed) return
-    const entries = ctx.slots.entries(source)
-    for (const [entry, dispose] of copies) if (!entries.includes(entry)) { dispose(); copies.delete(entry) }
-    for (const entry of entries) {
+    const current = new Set(aliases.flatMap(([source]) => ctx.slots.entries(source)))
+    for (const [entry, dispose] of copies) if (!current.has(entry)) { dispose(); copies.delete(entry) }
+    for (const [source, target] of aliases) for (const entry of ctx.slots.entries(source)) {
       if (copies.has(entry)) continue
-      // These documented child seats have the same owner, hook and store shares.
-      // Nested declarations are intentionally refused instead of stealing their ownership.
-      if (entry.children && Object.keys(entry.children).length) throw new Error('Unsupported nested sidebar contribution: ' + source)
       const options = { ...entry.options, name: target, inject: entry.inject, store: entry.store, locale: entry.locale }
       const register = ctx.slots.register as unknown as (input: typeof options, component: unknown) => () => void
       copies.set(entry, register.call(ctx.slots, options, entry.component))
     }
   }
-  const off = ctx.on('slots/changed', key => { if (key === source) sync() })
-  sync()
-  return () => { closed = true; off(); for (const dispose of copies.values()) dispose(); copies.clear() }
+  const dispose = ctx.effect(function* () {
+    const browserView = createSnapshotStore(true)
+    const inject = (): WorkspaceBrowserInjected => ({ ...shared, hooks: { ...shared.hooks, browserView } })
+    yield ctx.slots.register({ name: 'sidebar.workspaces', priority: -100, locale: 'workspace',
+      store: native.store as WorkspaceViewStoreHandle, inject,
+      children: {
+        'betterClassifier.directoryFlow': { kind: 'single', scope: 'root' },
+        'betterClassifier.tree': { kind: 'single', scope: 'root' },
+        'betterClassifier.toolbar': { kind: 'list', scope: 'root' },
+      },
+    }, WorkspaceBrowser)
+    const rowInject = () => ({ requestSessionRename: shared.requestSessionRename, hooks: { contextMenuTarget: ctx.contextMenus.active } })
+    yield ctx.slots.registerFactory({ name: 'betterClassifier.sessionRow', scope: 'root', locale: 'workspace', inject: rowInject,
+      children: {
+        'betterClassifier.session.row.action': { kind: 'list', scope: 'root' },
+        'betterClassifier.session.row.leading': { kind: 'list', scope: 'root', inline: true },
+        'betterClassifier.session.row.trailing': { kind: 'list', scope: 'root', inline: true },
+        'betterClassifier.session.row.hover': { kind: 'list', scope: 'root' },
+        'betterClassifier.session.row.tags': { kind: 'list', scope: 'root', inline: true },
+      },
+    }, SessionRowFactory)
+    yield ctx.slots.registerFactory({ name: 'betterClassifier.projectRow', scope: 'root', locale: 'workspace', inject: rowInject,
+      children: { 'betterClassifier.workspace.row.tags': { kind: 'list', scope: 'root', inline: true } },
+    }, ProjectRowFactory)
+    // Own rollback before the first copy, including failures halfway through sync.
+    yield () => { for (const dispose of copies.values()) dispose(); copies.clear() }
+    sync()
+  }, 'better-classifier: native registration lifetime')
+  return { owner: native, sync, dispose }
 }
 
-/** Shadow only the native browser component, sharing its public injected actions and viewing store. */
-export function installStockBrowser(ctx: Context): void {
-  let owner: StoredEntry | undefined
-  let release: (() => void) | undefined
-  let changing = false
-  let disposed = false
-  const reconcile = (): void => {
-    if (disposed || changing) return
-    const native = ctx.slots.entries('sidebar.workspaces').find(entry => entry.locale === 'workspace' && (entry.options.priority ?? 0) === 0)
-    if (native === owner) return
-    changing = true
-    try {
-      release?.(); release = undefined; owner = undefined
-      if (!native) return
-      if (!native.store || !native.inject) throw new Error('Unsupported DSH workspace registration; requires stock DSH 0.2.2-rc.2')
-      const shared = native.inject() as unknown as WorkspaceBrowserInjected
-      if (!shared.hooks?.workspaceActionRequest || !shared.hooks.workspaceShortcuts || !shared.requestSessionRename) {
-        throw new Error('DSH workspace action contract is unavailable')
-      }
-      owner = native
-      const dispose = ctx.effect(function* () {
-      const browserView = createSnapshotStore(true)
-      const inject = (): WorkspaceBrowserInjected => ({ ...shared, hooks: { ...shared.hooks, browserView } })
-      yield ctx.slots.register({ name: 'sidebar.workspaces', priority: -100, locale: 'workspace',
-        store: native.store as WorkspaceViewStoreHandle, inject,
-        children: {
-          'betterClassifier.directoryFlow': { kind: 'single', scope: 'root' },
-          'betterClassifier.tree': { kind: 'single', scope: 'root' },
-          'betterClassifier.toolbar': { kind: 'list', scope: 'root' },
-        },
-      }, WorkspaceBrowser)
-      const rowInject = () => ({ requestSessionRename: shared.requestSessionRename, hooks: { contextMenuTarget: ctx.contextMenus.active } })
-      yield ctx.slots.registerFactory({ name: 'betterClassifier.sessionRow', scope: 'root', locale: 'workspace', inject: rowInject,
-        children: {
-          'betterClassifier.session.row.action': { kind: 'list', scope: 'root' },
-          'betterClassifier.session.row.leading': { kind: 'list', scope: 'root', inline: true },
-          'betterClassifier.session.row.trailing': { kind: 'list', scope: 'root', inline: true },
-          'betterClassifier.session.row.hover': { kind: 'list', scope: 'root' },
-          'betterClassifier.session.row.tags': { kind: 'list', scope: 'root', inline: true },
-        },
-      }, SessionRowFactory)
-      yield ctx.slots.registerFactory({ name: 'betterClassifier.projectRow', scope: 'root', locale: 'workspace', inject: rowInject,
-        children: { 'betterClassifier.workspace.row.tags': { kind: 'list', scope: 'root', inline: true } },
-      }, ProjectRowFactory)
-      for (const [source, target] of aliases) yield mirror(ctx, source, target)
-      }, 'better-classifier: native registration lifetime')
-      release = () => { void dispose() }
-    } finally { changing = false }
+/** Shadow compatible native registrations without throwing into another plugin's register(). */
+export function installStockBrowser(ctx: Context) {
+  const status = createSnapshotStore<AdapterState>({ phase: 'waiting' })
+  let running: ReturnType<typeof mount> | undefined
+  let disposed = false, dirty = false
+  let task: Promise<void> | undefined
+  const setPhase = (phase: AdapterState['phase']): void => {
+    if (!disposed && status.getSnapshot().phase !== phase) status.set({ phase })
   }
-  ctx.on('slots/changed', key => { if (key === 'sidebar.workspaces') reconcile() })
-  ctx.effect(() => () => { disposed = true; release?.(); owner = undefined }, 'better-classifier: stock sidebar adapter')
-  reconcile()
+  const retire = async (): Promise<void> => {
+    const previous = running
+    running = undefined
+    await previous?.dispose()
+  }
+  const nativeOwner = (): StoredEntry | undefined => ctx.slots.entries('sidebar.workspaces').find(entry => entry.locale === 'workspace' && (entry.options.priority ?? 0) === 0)
+  const preflight = (): void => {
+    for (const [source] of aliases) for (const entry of ctx.slots.entries(source)) {
+      if (entry.children && Object.keys(entry.children).length) throw new Error('Unsupported nested sidebar contribution: ' + source)
+    }
+  }
+  const reconcile = async (): Promise<void> => {
+    try {
+      const native = nativeOwner()
+      if (!native) { await retire(); setPhase('waiting'); return }
+      preflight()
+      if (!native.store || !native.inject) throw new Error('Unsupported DSH workspace registration; requires stock DSH 0.2.2-rc.2')
+      if (running?.owner !== native) {
+        const shared = native.inject() as unknown as WorkspaceBrowserInjected
+        if (!shared.hooks?.workspaceActionRequest || !shared.hooks.workspaceShortcuts || !shared.requestSessionRename) throw new Error('DSH workspace action contract is unavailable')
+        if (running) await retire()
+        if (disposed) return
+        // Disposal can yield to an owner or contribution replacement. Re-read before installing.
+        if (nativeOwner() !== native) { dirty = true; return }
+        preflight()
+        running = mount(ctx, native, shared)
+      } else running.sync()
+      setPhase('ready')
+    } catch (error) {
+      await retire()
+      if (!disposed && status.getSnapshot().phase !== 'fallback') ctx.logger.warn('BetterClassifier restored the native sidebar: ' + String(error))
+      setPhase('fallback')
+    }
+  }
+  const schedule = (): void => {
+    if (disposed) return
+    dirty = true
+    if (task) return
+    // Let source register() finish declaring children before inspecting it.
+    task = Promise.resolve().then(async () => {
+      while (dirty && !disposed) { dirty = false; await reconcile() }
+    }).catch(error => {
+      if (!disposed) { ctx.logger.warn('BetterClassifier adapter cleanup failed: ' + String(error)); setPhase('fallback') }
+    }).finally(() => { task = undefined; if (dirty && !disposed) schedule() })
+  }
+  ctx.effect(function* () {
+    let observedOwner = nativeOwner()
+    yield ctx.slots.subscribe('sidebar.workspaces', () => {
+      const next = nativeOwner()
+      // Our shadow's install/rollback must not retry an unchanged, incompatible input.
+      if (next !== observedOwner) { observedOwner = next; schedule() }
+    })
+    for (const [source] of aliases) yield ctx.slots.subscribe(source, schedule)
+    yield async () => { disposed = true; dirty = false; await task; await retire() }
+  }, 'better-classifier: stock sidebar adapter')
+  // Initial contributions belong to plugin startup, before the Client loader releases its render barrier.
+  // Later registry notifications still use the deferred, serialized path above.
+  task = reconcile().catch(error => {
+    if (!disposed) { ctx.logger.warn('BetterClassifier adapter cleanup failed: ' + String(error)); setPhase('fallback') }
+  }).finally(() => { task = undefined; if (dirty && !disposed) schedule() })
+  return status
 }

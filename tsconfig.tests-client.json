@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.client.json",
+  "compilerOptions": { "noEmit": true, "composite": false, "rootDir": ".", "types": ["node"] },
+  "include": ["src/client/**/*.ts", "src/client/**/*.tsx", "src/types.ts", "src/domain/**/*.ts", "tests/controller.spec.ts", "tests/ui.spec.tsx", "tests/stock-adapter.spec.tsx", "tests/background-menu.spec.tsx", "tests/tag-layout.spec.ts", "tests/tag-draft.spec.ts"]
+}

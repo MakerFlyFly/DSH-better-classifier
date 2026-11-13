@@ -20,6 +20,10 @@ type ClassifierDomain = Domain<typeof domainSpec>
 class RejectedMutation extends Error {
   constructor(readonly result: Extract<MutationResult, { ok: false }>) { super('Classification mutation rejected') }
 }
+/** Exit the serialized update without writing an identical record or emitting a change. */
+class UnchangedMutation extends Error {
+  constructor(readonly state: ClassifierState) { super('Classification mutation unchanged') }
+}
 
 declare module '@deepseek-ai/cordis' {
   interface Context { betterClassifier: BetterClassifier }
@@ -85,11 +89,13 @@ export default class BetterClassifier extends TypertRemoteService {
       const state = await domain.table('state').update('root', current => {
         const result = reduceMutation(current, parsed.data, catalog)
         if (!result.ok) throw new RejectedMutation(result)
+        if (result.state === current) throw new UnchangedMutation(current)
         return stateSchema.parse(result.state)
       })
       return { ok: true, state: structuredClone(state) }
     } catch (error) {
       if (error instanceof RejectedMutation) return error.result
+      if (error instanceof UnchangedMutation) return { ok: true, state: structuredClone(error.state) }
       throw error
     }
   }

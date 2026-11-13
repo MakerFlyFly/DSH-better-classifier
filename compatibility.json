@@ -9,5 +9,5 @@
   "pnpm": "11.28.5",
   "node": ">=24.9.0",
   "testedPlatform": "win32-x64",
-  "pluginVersion": "0.2.0"
+  "pluginVersion": "0.2.1"
 }

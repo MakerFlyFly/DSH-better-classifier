@@ -20,6 +20,8 @@ export interface WorkspaceBrowserViewOwner {
   ready: boolean
   home: string | undefined
   currentId: SessionId | undefined
+  revealSessionId?: SessionId | undefined
+  onSessionRevealed?: ((id: SessionId) => void) | undefined
   openSession: (id: SessionId) => void
   startSession: (id: WorkspaceId) => void
   resultLimit: number

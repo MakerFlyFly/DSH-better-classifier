@@ -10,12 +10,13 @@ import type { createClassifierViewStore } from './state.ts'
 import type { ClassifierKey } from './locales.ts'
 import type { TagLayout } from './tag-layout.ts'
 import type { BackgroundRegion } from './background-menu.ts'
+import type { AdapterState } from './compat/install.ts'
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap { betterClassifier: ClassifierKey }
 }
 export interface ClassifierInjected {
-  hooks: { classifier: HostObservable<DataState>; interaction: HostObservable<InteractionState>; tagLayout: HostObservable<Readonly<Record<string, TagLayout>>> }
+  hooks: { classifier: HostObservable<DataState>; interaction: HostObservable<InteractionState>; adapter: HostObservable<AdapterState>; tagLayout: HostObservable<Readonly<Record<string, TagLayout>>> }
   measureTags: (key: string, element: HTMLElement | null) => void
   edit: (editor: Exclude<Editor, null>) => void
   closeEditor: () => void

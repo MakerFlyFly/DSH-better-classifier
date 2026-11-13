@@ -2,7 +2,7 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import type { Context } from '@deepseek-ai/cordis'
-import type {} from '../../src/index.ts'
+import type {} from 'dsh-better-classifier'
 export const inject = ['betterClassifier']
 export async function apply(ctx: Context, config: { file: string; report: string; hash: string }): Promise<void> {
   const snapshot = await ctx.betterClassifier.snapshot()

@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto'
 import { spawnSync, spawn } from 'node:child_process'
 import { createServer } from 'node:net'
 import { once } from 'node:events'
+import { isolateFixture } from './fixture-module.mjs'
 const root = resolve(import.meta.dirname, '..')
 const { name, version } = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
 if (!process.argv[2]) throw new Error('Usage: node scripts/verify-upgrade.mjs <metadata.json>')
@@ -30,7 +31,7 @@ await copyFile(input, file)
 const report = join(temp, 'report.json')
 const overlay = join(temp, 'probe.patch.yml')
 await writeFile(overlay, JSON.stringify([{ id: 'workspace-controller', config: { documentsDirectory: join(temp, 'projects') } },
-  { insert: [{ id: 'classifier-upgrade-probe', name: join(root, 'tests/fixtures/upgrade.ts'), config: { file, report, hash } }] }]))
+  { insert: [{ id: 'classifier-upgrade-probe', name: await isolateFixture(join(root, 'tests/fixtures/upgrade.ts'), join(temp, 'fixture-module')), config: { file, report, hash } }] }]))
 const reservation = createServer().listen(0, '127.0.0.1'); await once(reservation, 'listening')
 const port = reservation.address().port
 await new Promise(resolve => reservation.close(resolve))
