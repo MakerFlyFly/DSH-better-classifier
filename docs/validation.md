@@ -5,7 +5,7 @@ Version 0.2.1, verified on 2026-11-13 with Windows x64, Node.js 24.14.0, pnpm 11
 ## Automated verification
 
 - Production Host/Client builds and separate Host/Client test typechecks pass.
-- 106 tests in 15 files cover deterministic blank/pinned/mixed ordering, dissolving folders with missing parent ranks, duplicate siblings, Unicode names, unloaded identities, atomic CAS, unchanged transactions, failed writes, and tag drafts.
+- 108 tests in 15 files cover deterministic blank/pinned/mixed ordering, dissolving folders with missing parent ranks, duplicate siblings, Unicode names, unloaded identities, atomic CAS, unchanged transactions, failed writes, tag drafts, and local archive resolution by npm's package parser.
 - Lifecycle regressions cover simultaneous retries, disposal, late snapshots and write replies after a stream failure, search reveal through the real native row, and folded Ungrouped navigation.
 - Real SlotRegistry tests cover initial startup ownership, nested contributions before/after activation, partial-install rollback, owner replacement, automatic recovery, and queued work during unload.
 - Actual RemoteAccessService decisions reject ungranted classification actions and allow owner access. Generated strict codecs reject malformed search arguments. These are authorization/codec boundary tests, not a full HTTP Gateway penetration test.
