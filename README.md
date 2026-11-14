@@ -1,7 +1,7 @@
 <div align="center">
   <h1>DSH-better-classifier</h1>
   <p>Organize your DSH projects and conversations with folders, colored tags, and tree-shaped search.</p>
-  <p><a href="README_ZH.md"><strong>中文文档</strong></a> · English</p>
+  <p><a href="README_ZH.md"><strong>中文</strong></a> · English</p>
   <p>
     <a href="https://www.npmjs.com/package/dsh-better-classifier"><img alt="npm version" src="https://img.shields.io/npm/v/dsh-better-classifier" /></a>
     <a href="https://github.com/MakerFlyFly/DSH-better-classifier/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/MakerFlyFly/DSH-better-classifier/actions/workflows/ci.yml/badge.svg?branch=main" /></a>
