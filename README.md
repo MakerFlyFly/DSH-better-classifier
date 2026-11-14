@@ -1,55 +1,153 @@
-# DSH-better-classifier
+<div align="center">
+  <h1>DSH-better-classifier</h1>
+  <p>Organize your DSH projects and conversations with folders, colored tags, and tree-shaped search.</p>
+  <p><a href="README_ZH.md"><strong>中文文档</strong></a> · English</p>
+  <p>
+    <a href="https://www.npmjs.com/package/dsh-better-classifier"><img alt="npm version" src="https://img.shields.io/npm/v/dsh-better-classifier" /></a>
+    <a href="https://github.com/MakerFlyFly/DSH-better-classifier/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/MakerFlyFly/DSH-better-classifier/actions/workflows/ci.yml/badge.svg?branch=main" /></a>
+    <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue" /></a>
+    <a href="compatibility.json"><img alt="Supported DSH version: 0.2.2-rc.2" src="https://img.shields.io/badge/DSH-0.2.2--rc.2-4d6bfe" /></a>
+  </p>
+</div>
 
-[中文](README_ZH.md) · English
+<p align="center">
+  <img src="detail/sidebar.jpg" width="420" alt="Nested folders and conversation tags in the DSH sidebar, using demonstration data" />
+</p>
 
-Organize the DSH conversation sidebar with nested virtual folders, colored tags, and search results that preserve the tree.
+## Highlights
 
-![Sidebar with synthetic demo projects and tags](detail/sidebar.jpg)
+- **Folder organization** — group projects in virtual folders, then organize conversations inside each project. Both levels support nested folders.
+- **Colored tags** — label projects, folders, and conversations. Add, remove, and edit tags in one dialog; wider sidebars display more tags.
+- **Tree-shaped search** — find names, tags, conversation IDs, and message content while keeping the surrounding folder structure.
 
-Version **0.2.1** targets stock **DSH 0.2.2-rc.2**, without modifying DSH source or installed packages. Node.js **24.9.0 or later** is required. Validated on Windows x64; other host versions and platforms are not declared compatible. See the [validation record](docs/validation.md).
+Native project and conversation menus, pinning, archive filters, running status, sorting, directory selection, and shortcuts remain available.
 
-## What it does
+## Quick start
 
-- Organizes projects in outer folders and conversations in folders within their project. Moving classification never moves files or changes working directories.
-- Creates root folders from a right-click on list whitespace, including empty lists and empty search results. The focused background also supports the menu key and Shift+F10.
-- Supports nested folders, single-item drag and drop, ordering, rename, and move menus. Deleting a folder moves its direct children up one level.
-- Edits direct tags as chips on one page. Add, remove, create, rename, or recolor in a draft; Save commits together and Cancel discards it. Tags never inherit.
-- Fits tags to the available row width, using `+N` only for overflow and keeping space before the time/actions.
-- Searches names, direct tag names, conversation IDs, and message content through the stock DSH index. Matching containers start collapsed; leaf matches show their ancestor path. Up to 20 result entries are shown.
-- Retains native project/session menus, pinning, archive filters, status indicators, sorting, directory picker, and shortcuts. Disabling the plugin restores the native list.
+**Requires stock DSH `0.2.2-rc.2` and Node.js `>=24.9.0`.** Version `0.2.1` has been validated on Windows x64. Other DSH versions and platforms have not been verified. See the [validation record](docs/validation.md).
 
-## Installation
-
-Verify `dsh --version` reports `0.2.2-rc.2`, then install from npm:
+Check your host version with `dsh --version`, then install:
 
 ```sh
 dsh plugin --profile web add dsh-better-classifier@0.2.1
-dsh web --no-open
 ```
 
-Restart an already running DSH process and refresh its browser after installing. Replace `web` with the intended profile. The archive includes its build output; installation does not run a build or apply a source patch.
+**Restart DSH and refresh its browser tab.** If DSH is not running, start the Web interface with `dsh web --no-open`. The install command targets the `web` profile; replace that name if you use a different profile.
 
-Alternatively, download `dsh-better-classifier-0.2.1.tgz` from [GitHub Releases](https://github.com/MakerFlyFly/DSH-better-classifier/releases/tag/v0.2.1), verify its SHA-256 against the accompanying checksum file, and pass the local archive path to the same install command.
+The npm package is prebuilt. Installation needs no local build or DSH source patch.
 
-The Git repository contains source code and needs the development build below before local installation. npm publication and community-directory submissions are tracked in [distribution status](docs/distribution.md).
+## Everyday use
 
-## Upgrade and remove
+### 1. Create folders and organize the tree
 
-The `better_classifier` storage domain remains version 1. Versions 0.1.x and 0.2.x share the folder, tag, placement, revision, and order representation; no data migration is required. The browser expansion key is unchanged. Old tag visibility and standalone-filter preferences remain ignored.
+Right-click the blank area below the list and choose **New folder** to create an outer folder. This also works with an empty list or no search results. To create a folder inside a project or another folder, use that row's context menu.
 
-Version 0.1.x required a custom host patch. For 0.2.x, install into a stock 0.2.2-rc.2 host using the same DSH data directory/profile, after making a backup. Do not reverse-apply an old patch over a working tree with unrelated edits. An existing trial can remain alongside an isolated 0.2.1 development instance.
+Drag one item at a time to move or reorder it, or use the row menu to rename it or choose a destination. Folders containing conversations stay within their project. Deleting a folder moves its direct children up one level and preserves the contents of nested folders.
 
-Disable the plugin through DSH's Plugins page, or remove it with:
+For keyboard access, focus the blank list area and press the menu key or `Shift+F10`.
+
+### 2. Add and edit tags
+
+Open an item's tag editor from its row menu or by clicking its tags. Added tags appear at the top; available tags appear below. Click an available tag to add it, or use the × on an added tag to remove that association.
+
+Click an added tag to edit its name or color, or use **Add tags** to create one. **Save** applies the changes together; **Cancel** discards the draft. Tags belong only to the items you explicitly label and do not inherit from parent folders.
+
+Sidebar tags fit the available row width. `+N` appears only when tags overflow, with spacing kept before the time and action buttons.
+
+### 3. Search, then explore
+
+Use the existing sidebar search box to search names, direct tag names, conversation IDs, or message content. Up to **20 result entries** are shown; ancestor paths and contents you expand yourself do not count toward that limit.
+
+Open a matching project or folder to browse its contents. A matching conversation appears with its ancestor path. Select a conversation to open it and reveal its location in the normal tree; clear the search to return to your classifications.
+
+## Common questions and data
+
+**Does moving an item change its files or working directory?**
+
+No. Folders provide virtual classification; the actual files and working directories stay in place.
+
+**Why are matching folders collapsed?**
+
+Search first shows the outermost matching project or folder so its contents do not fill the results. Expand it to browse one level at a time, including children that did not match the query. Archive conditions still apply. When only a conversation matches, the necessary ancestor path opens to show it.
+
+**What happens when I disable or uninstall the plugin?**
+
+Disabling it from DSH's Plugins page restores the native list. To uninstall:
 
 ```sh
 dsh plugin --profile web remove dsh-better-classifier
 ```
 
-Classification data remains in the configured DSH storage backend (by default `storages/better_classifier.json`) for reinstallation. Folder expansion remains browser-local. No cloud synchronization is provided.
+Classification data is retained for reinstallation. It is separate from conversation logs and model context, and uses the configured DSH storage backend: by default, `storages/better_classifier.json` under `DSH_HOME`. Expansion preferences stay in the browser. There is no cloud sync between independent DSH instances.
 
-## Development and verification
+**Does content search store message text?**
 
-Build dependencies come from npm; the Loader regression also uses the system `tar` utility. No DSH source checkout, local symlink, or fixed machine path is needed.
+Yes. The first content search enables DSH's shared local SQLite index at `storages/better_classifier_search.sqlite` under `DSH_HOME`. **It stores searchable message text and may index all persisted conversations.** Candidate IDs and access checks restrict the results, not the indexing scope. Disk usage grows with the indexed history.
+
+Disabling or uninstalling the plugin leaves this index file in place. Deleting a conversation does not guarantee immediate physical erasure of its text from SQLite. Memory-only indexing, disabling content indexing, and clearing the derived index are described below.
+
+## Advanced options
+
+<details>
+<summary><strong>Install from a release archive or source</strong></summary>
+
+Download `dsh-better-classifier-0.2.1.tgz` from [GitHub Releases](https://github.com/MakerFlyFly/DSH-better-classifier/releases/tag/v0.2.1) and verify its SHA-256 against the accompanying checksum file. Replace the package name in the install command with the local archive path.
+
+The Git repository contains source code. Follow the development build below before installing from a local checkout. Published packages and catalogue applications are tracked in [distribution status](docs/distribution.md).
+
+</details>
+
+<details>
+<summary><strong>Upgrade from the patched 0.1.x releases</strong></summary>
+
+Back up your data, then install `0.2.1` into stock DSH `0.2.2-rc.2`, using the same DSH data directory and profile. Version `0.1.x` required a custom host patch; `0.2.x` does not. Do not reverse-apply an old patch over a source checkout containing unrelated edits.
+
+Versions `0.1.x` and `0.2.x` use the same version-1 `better_classifier` storage format. Folders, tags, placements, ordering, and revisions need no migration. The browser expansion key is unchanged; old tag-visibility and standalone-filter preferences remain ignored.
+
+An existing trial can remain alongside an isolated development instance; use separate data directories and ports.
+
+</details>
+
+<details>
+<summary><strong>Configure or clear the content-search index</strong></summary>
+
+Configuration is applied in this order: plugin bundle → profile patch → `DSH_HOME` patch → command-line overlay. Later user configuration takes precedence.
+
+For a memory-only index, add this to the profile's `cordis.patch.yml` or an existing user overlay:
+
+```yaml
+- id: session-query-sqlite
+  config:
+    path: ':memory:'
+    openAt: first-search
+```
+
+Set `openAt: never` to disable content indexing; name and tag search remain available. Disabling or uninstalling BetterClassifier removes its configuration layer, but keeps the derived index file.
+
+To clear the default disk index:
+
+1. Close every DSH process using that `DSH_HOME`.
+2. In `storages`, manually remove only `better_classifier_search.sqlite` and its `-wal` / `-shm` sidecars. A later search can rebuild the index.
+
+Keep `better_classifier.json` and conversation logs. Do not delete a custom database path shared by other configurations.
+
+</details>
+
+<details>
+<summary><strong>Handle save failures, search errors, or sidebar conflicts</strong></summary>
+
+- **Concurrent edits:** saves are atomic and check the server revision. A conflicting draft is refused; reopen the editor before retrying. Write failures retain your draft. Unknown or temporarily unloaded project/conversation IDs are not automatically removed from classification storage.
+- **Content-search errors:** name matches remain visible, with a Retry action for content search.
+- **Unsupported sidebar extensions:** the native sidebar returns and new classification actions are hidden. Open drafts are retained with Save disabled until the adapter recovers. Removing the conflicting nested contribution restores classification automatically.
+
+</details>
+
+## Development
+
+<details>
+<summary><strong>Build, test, and run an isolated demo</strong></summary>
+
+Dependencies come from npm; the Loader regression also needs the system `tar` utility. A local DSH source checkout, symlinks, or machine-specific paths are not required.
 
 ```sh
 corepack pnpm install --frozen-lockfile --ignore-scripts
@@ -60,35 +158,29 @@ pnpm test
 pnpm dev --fixture
 ```
 
-`pnpm verify` runs build → typecheck → package → test in that order. Typechecking needs the generated Remote declarations; the Loader test needs the current tarball. Host and Client test files are checked separately along with production source.
+`pnpm verify` runs build → typecheck → package → test. Typechecking needs the generated Remote declarations, and the Loader test needs the current tarball. Host and Client tests are typechecked separately alongside production source.
 
-The isolated review uses `.dev/review-0.2.1/home` and port 3085 (`--port=3087` keeps an older trial running alongside it). The startup output contains a local authentication URL. `--fixture` seeds synthetic projects/conversations and exercises storage and search without calling a model. Fixture modules receive a separate private package boundary so DSH cannot discover the repository's Client through them. After seeding, stop the process and run `pnpm dev --installed --port=3087` without `--fixture` for browser lifecycle checks. Tests use their own homes and the exact published DSH CLI. The tarball and source ZIP are written to `dist/`; source selection respects root and nested ignore rules and also works without `.git`.
+The demo uses `.dev/review-0.2.1/home` and port `3085`; pass `--port=3087` to use another port. Startup prints a local authentication URL. `--fixture` seeds demonstration projects and conversations and exercises storage/search without calling a model.
 
-The client adapter shadows the public `sidebar.workspaces` registration while borrowing its native action/state shares. Native picker and row contributions are mirrored into plugin-owned child seats and released with the owning registration. The compatibility boundary is therefore pinned, rather than claiming support for future DSH releases. `betterClassifier.searchContent` owns candidate-filtered search; authorization and filters run before the result limit. Remote metadata is generated in a disposable build workspace; installed host/generator files remain unchanged.
+For browser lifecycle checks, stop after seeding and run `pnpm dev --installed --port=3087` without `--fixture`. Fixture modules have a separate private package boundary so DSH cannot discover the source Client through them. Automated tests use separate data directories and the published stock DSH CLI.
 
-## Data and failures
+The tarball and source ZIP are written to `dist/`. Source archives respect root and nested ignore rules and can be built without `.git`. Local profiles, sessions, credentials, caches, logs, and work records are excluded. Public screenshots use demonstration data.
 
-Classification metadata is separate from conversation logs and model context. Saves use the server revision and commit atomically. A conflicting draft is refused and must be reopened; write failures retain the draft. Body-search failures retain name matches and offer Retry. Unknown/unloaded project and conversation IDs are not automatically deleted from classification storage.
+See the [validation record](docs/validation.md) and [release process](docs/release.md).
 
-An unsupported sidebar contribution restores the original sidebar and hides new classification actions. An open draft is retained with Save disabled until the adapter is available again. Removing the conflicting nested contribution restores classification automatically.
+</details>
 
-### Body-search index
+<details>
+<summary><strong>How the DSH integration works</strong></summary>
 
-The standard bundle configuration enables the shared SQLite query service on the first body search, using `storages/better_classifier_search.sqlite` under `DSH_HOME`. The index stores searchable message text, not just hashes or snippets. It can index all persisted conversations; candidate IDs and access checks restrict search results, not which conversations are indexed. Disk use grows with the indexed history.
+The adapter shadows the public `sidebar.workspaces` registration and reuses native action/state shares. Picker, row-action, and decoration contributions are mirrored into plugin-owned child slots and released with their owning registration. These interfaces can change, so compatibility is pinned to the tested host version.
 
-Configuration precedence is bundle → profile patch → `DSH_HOME` patch → command-line overlay. Your later configuration remains authoritative. For a memory-only index, add this to your profile's `cordis.patch.yml` (or an existing user overlay):
+`betterClassifier.searchContent` handles candidate-filtered content search, applying authorization and filters before limiting results. Remote metadata is generated in a temporary build workspace without modifying installed DSH or generator files.
 
-```yaml
-- id: session-query-sqlite
-  config:
-    path: ':memory:'
-    openAt: first-search
-```
+</details>
 
-Setting `openAt: never` disables body indexing; name/tag search remains available. Disabling or uninstalling BetterClassifier removes its configuration layer but leaves the derived index file. Removing a conversation does not guarantee immediate physical erasure from SQLite. To discard the default derived index, close every DSH process using that `DSH_HOME`, then manually remove only `better_classifier_search.sqlite` and its `-wal`/`-shm` sidecars from `storages`; it can be rebuilt on a later search. Do not remove `better_classifier.json`, session logs, or a custom database path shared by other configurations.
+## Feedback and license
 
-Only synthetic test data is used in public documentation. Local profiles, session files, credentials, build caches, logs, and work records are excluded from distributable archives.
+[Report an issue](https://github.com/MakerFlyFly/DSH-better-classifier/issues) · [Changelog](CHANGELOG.md) · [Validation](docs/validation.md) · [Distribution status](docs/distribution.md)
 
-## License
-
-MIT. The UI adapter derives from MIT-licensed DeepSeek Harness. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+[MIT](LICENSE). The UI adapter derives from MIT-licensed DeepSeek Harness; see [third-party notices](THIRD_PARTY_NOTICES.md).
