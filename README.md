@@ -20,8 +20,6 @@
 - **Colored tags** — label projects, folders, and conversations. Add, remove, and edit tags in one dialog; wider sidebars display more tags.
 - **Tree-shaped search** — find names, tags, conversation IDs, and message content while keeping the surrounding folder structure.
 
-Native project and conversation menus, pinning, archive filters, running status, sorting, directory selection, and shortcuts remain available.
-
 ## Quick start
 
 **Requires stock DSH `0.2.2-rc.2` and Node.js `>=24.9.0`.** Version `0.2.1` has been validated on Windows x64. Other DSH versions and platforms have not been verified. See the [validation record](docs/validation.md).
