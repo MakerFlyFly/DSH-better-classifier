@@ -2,7 +2,7 @@
 
 Organize projects and conversations into a clear folder tree, mark them with colored tags, and find them through one search field.
 
-![Folders, tags, and the empty-space menu](sidebar.jpg)
+![English folders, tags, and the New folder menu](sidebar-en.png)
 
 - Right-click empty list space to create a folder. Project and folder menus create nested folders.
 - Move projects, folders, and conversations with drag and drop or their row menus.
@@ -12,7 +12,7 @@ Organize projects and conversations into a clear folder tree, mark them with col
 
 ## Compatibility
 
-Version 0.2.1 supports Windows x64 with stock DSH 0.2.2-rc.2, without source patches. Restart DSH and refresh the browser after installing.
+Version 0.2.2 supports Windows x64 with stock DSH 0.2.2-rc.2, without source patches. Restart DSH and refresh the browser after installing.
 
 ## Data
 

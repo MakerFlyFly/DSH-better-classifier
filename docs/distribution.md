@@ -2,6 +2,8 @@
 
 Package: `dsh-better-classifier` · Published: `0.2.1` · Repository: [MakerFlyFly/DSH-better-classifier](https://github.com/MakerFlyFly/DSH-better-classifier)
 
+Release `0.2.2` is being prepared to synchronize npm documentation and English imagery. It changes no runtime behavior or compatibility requirement. This round publishes only to GitHub and npm; the catalogue records below describe earlier 0.2.1 submissions and do not establish review of 0.2.2.
+
 0.2.1 is available on GitHub and npm. Publication, archive identity, and registry installation were verified on 2026-11-14 (Asia/Kuala_Lumpur). Five catalogue applications were submitted on 2026-11-14; the main community index entry is prepared but is waiting for its repository-age requirement. The `dsh-plugin` discovery topic has been restored. No catalogue acceptance or installation certification is implied by these submissions.
 
 | Channel | Status |

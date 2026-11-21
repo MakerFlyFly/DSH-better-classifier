@@ -1,17 +1,17 @@
 <div align="center">
   <h1>DSH-better-classifier</h1>
   <p>Organize your DSH projects and conversations with folders, colored tags, and tree-shaped search.</p>
-  <p><a href="README_ZH.md"><strong>中文</strong></a> · English</p>
+  <p><a href="https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/README_ZH.md"><strong>中文</strong></a> · English</p>
   <p>
     <a href="https://www.npmjs.com/package/dsh-better-classifier"><img alt="npm version" src="https://img.shields.io/npm/v/dsh-better-classifier" /></a>
     <a href="https://github.com/MakerFlyFly/DSH-better-classifier/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/MakerFlyFly/DSH-better-classifier/actions/workflows/ci.yml/badge.svg?branch=main" /></a>
-    <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue" /></a>
-    <a href="compatibility.json"><img alt="Supported DSH version: 0.2.2-rc.2" src="https://img.shields.io/badge/DSH-0.2.2--rc.2-4d6bfe" /></a>
+    <a href="https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue" /></a>
+    <a href="https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/compatibility.json"><img alt="Supported DSH version: 0.2.2-rc.2" src="https://img.shields.io/badge/DSH-0.2.2--rc.2-4d6bfe" /></a>
   </p>
 </div>
 
 <p align="center">
-  <img src="detail/sidebar-en.png" width="420" alt="English sidebar showing nested folders, colored tags, and the New folder menu with demonstration data" />
+  <img src="https://raw.githubusercontent.com/MakerFlyFly/DSH-better-classifier/v0.2.2/detail/sidebar-en.png" width="420" alt="English sidebar showing nested folders, colored tags, and the New folder menu with demonstration data" />
 </p>
 
 ## Highlights
@@ -22,17 +22,19 @@
 
 ## Quick start
 
-**Requires stock DSH `0.2.2-rc.2` and Node.js `>=24.9.0`.** Version `0.2.1` has been validated on Windows x64. Other DSH versions and platforms have not been verified. See the [validation record](docs/validation.md).
+**Requires stock DSH `0.2.2-rc.2` and Node.js `>=24.9.0`.** Version `0.2.2` has been validated on Windows x64. Other DSH versions and platforms have not been verified. See the [validation record](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/docs/validation.md).
 
 Check your host version with `dsh --version`, then install:
 
 ```sh
-dsh plugin --profile web add dsh-better-classifier@0.2.1
+dsh plugin --profile web add dsh-better-classifier@0.2.2
 ```
 
 **Restart DSH and refresh its browser tab.** If DSH is not running, start the Web interface with `dsh web --no-open`. The install command targets the `web` profile; replace that name if you use a different profile.
 
 The npm package is prebuilt. Installation needs no local build or DSH source patch.
+
+Prefer a local installer? [Download the prebuilt package from GitHub Releases](https://github.com/MakerFlyFly/DSH-better-classifier/releases/tag/v0.2.2).
 
 ## Everyday use
 
@@ -89,16 +91,16 @@ Disabling or uninstalling the plugin leaves this index file in place. Deleting a
 <details>
 <summary><strong>Install from a release archive or source</strong></summary>
 
-Download `dsh-better-classifier-0.2.1.tgz` from [GitHub Releases](https://github.com/MakerFlyFly/DSH-better-classifier/releases/tag/v0.2.1) and verify its SHA-256 against the accompanying checksum file. Replace the package name in the install command with the local archive path.
+Download `dsh-better-classifier-0.2.2.tgz` from [GitHub Releases](https://github.com/MakerFlyFly/DSH-better-classifier/releases/tag/v0.2.2) and verify its SHA-256 against the accompanying checksum file. Replace the package name in the install command with the local archive path.
 
-The Git repository contains source code. Follow the development build below before installing from a local checkout. Published packages and catalogue applications are tracked in [distribution status](docs/distribution.md).
+The Git repository contains source code. Follow the development build below before installing from a local checkout. Published packages and catalogue applications are tracked in [distribution status](https://github.com/MakerFlyFly/DSH-better-classifier/blob/main/docs/distribution.md).
 
 </details>
 
 <details>
 <summary><strong>Upgrade from the patched 0.1.x releases</strong></summary>
 
-Back up your data, then install `0.2.1` into stock DSH `0.2.2-rc.2`, using the same DSH data directory and profile. Version `0.1.x` required a custom host patch; `0.2.x` does not. Do not reverse-apply an old patch over a source checkout containing unrelated edits.
+Back up your data, then install `0.2.2` into stock DSH `0.2.2-rc.2`, using the same DSH data directory and profile. Version `0.1.x` required a custom host patch; `0.2.x` does not. Do not reverse-apply an old patch over a source checkout containing unrelated edits.
 
 Versions `0.1.x` and `0.2.x` use the same version-1 `better_classifier` storage format. Folders, tags, placements, ordering, and revisions need no migration. The browser expansion key is unchanged; old tag-visibility and standalone-filter preferences remain ignored.
 
@@ -158,13 +160,13 @@ pnpm dev --fixture
 
 `pnpm verify` runs build → typecheck → package → test. Typechecking needs the generated Remote declarations, and the Loader test needs the current tarball. Host and Client tests are typechecked separately alongside production source.
 
-The demo uses `.dev/review-0.2.1/home` and port `3085`; pass `--port=3087` to use another port. Startup prints a local authentication URL. `--fixture` seeds demonstration projects and conversations and exercises storage/search without calling a model.
+The demo uses `.dev/review-0.2.2/home` and port `3085`; pass `--port=3087` to use another port. Startup prints a local authentication URL. `--fixture` seeds demonstration projects and conversations and exercises storage/search without calling a model.
 
 For browser lifecycle checks, stop after seeding and run `pnpm dev --installed --port=3087` without `--fixture`. Fixture modules have a separate private package boundary so DSH cannot discover the source Client through them. Automated tests use separate data directories and the published stock DSH CLI.
 
 The tarball and source ZIP are written to `dist/`. Source archives respect root and nested ignore rules and can be built without `.git`. Local profiles, sessions, credentials, caches, logs, and work records are excluded. Public screenshots use demonstration data.
 
-See the [validation record](docs/validation.md) and [release process](docs/release.md).
+See the [validation record](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/docs/validation.md) and [release process](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/docs/release.md).
 
 </details>
 
@@ -179,6 +181,6 @@ The adapter shadows the public `sidebar.workspaces` registration and reuses nati
 
 ## Feedback and license
 
-[Report an issue](https://github.com/MakerFlyFly/DSH-better-classifier/issues) · [Changelog](CHANGELOG.md) · [Validation](docs/validation.md) · [Distribution status](docs/distribution.md)
+[Report an issue](https://github.com/MakerFlyFly/DSH-better-classifier/issues) · [Changelog](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/CHANGELOG.md) · [Validation](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/docs/validation.md) · [Distribution status](https://github.com/MakerFlyFly/DSH-better-classifier/blob/main/docs/distribution.md)
 
-[MIT](LICENSE). The UI adapter derives from MIT-licensed DeepSeek Harness; see [third-party notices](THIRD_PARTY_NOTICES.md).
+[MIT](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/LICENSE). The UI adapter derives from MIT-licensed DeepSeek Harness; see [third-party notices](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/THIRD_PARTY_NOTICES.md).

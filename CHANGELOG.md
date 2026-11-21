@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2 — 2026-11-22
+
+- Updates the npm README with the clearer bilingual layout and an English screenshot captured from the real plugin; the Chinese README keeps its Chinese screenshot.
+- Uses an English npm summary and matches the English plugin detail page to the English image. README images and language links point to the fixed release tag for use on both GitHub and npm.
+- Adds a prominent GitHub Release download link and documents the difference between permanent release assets and temporary Actions artifacts.
+- Changes documentation, imagery and release metadata only. Runtime behavior, APIs, version-1 storage and stock DSH 0.2.2-rc.2 compatibility are unchanged.
+
 ## 0.2.1 — 2026-11-13
 
 - Makes blank/pinned priority deterministic while preserving mixed folders and ordinary sessions. Dissolving folders retains manual child order without freezing unrelated conversations.

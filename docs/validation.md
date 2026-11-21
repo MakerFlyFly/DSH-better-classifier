@@ -1,4 +1,21 @@
-# 0.2.1 validation / 验证记录
+# Validation / 验证记录
+
+## 0.2.2 documentation release — 2026-11-22
+
+This release updates documentation, screenshots and package metadata. Runtime source, Remote contracts, dependencies, the bundle configuration and storage format remain unchanged from 0.2.1. Compatibility remains stock DSH 0.2.2-rc.2 on Windows x64.
+
+The English screenshot was captured from the real 0.2.1 plugin in a separate stock DSH instance with English demonstration data. The unchanged UI is reused for 0.2.2; this is not a claim that historical browser tests were rerun. English and Chinese assets are both retained.
+
+Verification on Windows x64 with Node.js 24.14.0 and pnpm 11.28.5:
+
+- The frozen dependency install and `pnpm verify` passed: production builds, production/test typechecks, package boundary checks, and all 108 tests in 15 files.
+- The real stock DSH CLI/Loader test installed the 0.2.2 archive, started the Host, removed/reinstalled it, and restarted with classification metadata retained. Candidate-filtered SQLite search and revision-conflict checks passed.
+- The package includes both language screenshots and the updated English detail page. README language and image links use explicit GitHub URLs, with image content pinned to `v0.2.2`.
+- Runtime source, tests, build/publish scripts, dependencies and bundle configuration were compared with `v0.2.1`; no runtime changes were introduced. The newer documentation does not extend the tested host/platform range.
+
+Post-publication npm installation, workflow results, page checks and final download identities are recorded in the [current distribution status](https://github.com/MakerFlyFly/DSH-better-classifier/blob/main/docs/distribution.md). Historical functional/browser verification below remains attributed to 0.2.1.
+
+# 0.2.1 validation / 历史验证记录
 
 Version 0.2.1, verified on 2026-11-13 with Windows x64, Node.js 24.14.0, pnpm 11.28.5, and the published, unmodified `@deepseek-ai/dsh@0.2.2-rc.2`. Confirmed release links and registry-install results are recorded in [distribution status](distribution.md).
 

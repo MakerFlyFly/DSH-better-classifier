@@ -1,17 +1,17 @@
 <div align="center">
   <h1>DSH-better-classifier</h1>
   <p>用文件夹分类、彩色标签和树形搜索，整理 DSH 项目与会话。</p>
-  <p><strong>中文</strong> · <a href="README.md">English</a></p>
+  <p><strong>中文</strong> · <a href="https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/README.md">English</a></p>
   <p>
     <a href="https://www.npmjs.com/package/dsh-better-classifier"><img alt="npm 版本" src="https://img.shields.io/npm/v/dsh-better-classifier" /></a>
     <a href="https://github.com/MakerFlyFly/DSH-better-classifier/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/MakerFlyFly/DSH-better-classifier/actions/workflows/ci.yml/badge.svg?branch=main" /></a>
-    <a href="LICENSE"><img alt="许可证：MIT" src="https://img.shields.io/badge/license-MIT-blue" /></a>
-    <a href="compatibility.json"><img alt="兼容 DSH 版本：0.2.2-rc.2" src="https://img.shields.io/badge/DSH-0.2.2--rc.2-4d6bfe" /></a>
+    <a href="https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/LICENSE"><img alt="许可证：MIT" src="https://img.shields.io/badge/license-MIT-blue" /></a>
+    <a href="https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/compatibility.json"><img alt="兼容 DSH 版本：0.2.2-rc.2" src="https://img.shields.io/badge/DSH-0.2.2--rc.2-4d6bfe" /></a>
   </p>
 </div>
 
 <p align="center">
-  <img src="detail/sidebar.jpg" width="420" alt="使用演示数据展示 DSH 侧栏中的嵌套文件夹和会话标签" />
+  <img src="https://raw.githubusercontent.com/MakerFlyFly/DSH-better-classifier/v0.2.2/detail/sidebar.jpg" width="420" alt="使用演示数据展示 DSH 侧栏中的嵌套文件夹和会话标签" />
 </p>
 
 ## 功能概览
@@ -23,17 +23,19 @@
 
 ## 快速安装
 
-**要求原版 DSH `0.2.2-rc.2` 和 Node.js `>=24.9.0`。** 插件 `0.2.1` 已在 Windows x64 验证，其他 DSH 版本和平台尚未验证。详见[验证记录](docs/validation.md)。
+**要求原版 DSH `0.2.2-rc.2` 和 Node.js `>=24.9.0`。** 插件 `0.2.2` 已在 Windows x64 验证，其他 DSH 版本和平台尚未验证。详见[验证记录](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/docs/validation.md)。
 
 先用 `dsh --version` 确认宿主版本，再安装：
 
 ```powershell
-dsh plugin --profile web add dsh-better-classifier@0.2.1
+dsh plugin --profile web add dsh-better-classifier@0.2.2
 ```
 
 **安装后重启 DSH，并刷新浏览器页面。** 如果 DSH 尚未运行，可用 `dsh web --no-open` 启动 Web 界面。安装命令使用 `web` profile；使用其他 profile 时，请替换对应名称。
 
 npm 包已包含构建产物，无需本地构建或修改 DSH 源码。
+
+也可[从 GitHub Releases 下载预构建安装包](https://github.com/MakerFlyFly/DSH-better-classifier/releases/tag/v0.2.2)，使用本地文件安装。
 
 ## 基本用法
 
@@ -90,16 +92,16 @@ dsh plugin --profile web remove dsh-better-classifier
 <details>
 <summary><strong>从安装包或源码安装</strong></summary>
 
-从 [GitHub Releases](https://github.com/MakerFlyFly/DSH-better-classifier/releases/tag/v0.2.1) 下载 `dsh-better-classifier-0.2.1.tgz`，使用配套校验和文件核对 SHA-256，然后将安装命令中的包名替换为本地压缩包路径。
+从 [GitHub Releases](https://github.com/MakerFlyFly/DSH-better-classifier/releases/tag/v0.2.2) 下载 `dsh-better-classifier-0.2.2.tgz`，使用配套校验和文件核对 SHA-256，然后将安装命令中的包名替换为本地压缩包路径。
 
-Git 仓库提供源码，从本地源码安装前需完成下方开发构建。已发布的安装包及市场申请进展见[分发状态](docs/distribution.md)。
+Git 仓库提供源码，从本地源码安装前需完成下方开发构建。已发布的安装包及市场申请进展见[分发状态](https://github.com/MakerFlyFly/DSH-better-classifier/blob/main/docs/distribution.md)。
 
 </details>
 
 <details>
 <summary><strong>从依赖补丁的 0.1.x 升级</strong></summary>
 
-先备份数据，再使用相同的 DSH 数据目录和 profile，将 `0.2.1` 安装到原版 DSH `0.2.2-rc.2`。`0.1.x` 依赖自定义宿主补丁，`0.2.x` 已无需该补丁。不要在包含其他改动的源码工作区盲目反向应用旧补丁。
+先备份数据，再使用相同的 DSH 数据目录和 profile，将 `0.2.2` 安装到原版 DSH `0.2.2-rc.2`。`0.1.x` 依赖自定义宿主补丁，`0.2.x` 已无需该补丁。不要在包含其他改动的源码工作区盲目反向应用旧补丁。
 
 `0.1.x` 与 `0.2.x` 沿用 `better_classifier` 第 1 版存储格式，文件夹、标签、归属、顺序和修订号无需迁移。浏览器展开偏好的键保持不变；旧的标签隐藏和独立筛选偏好继续忽略。
 
@@ -159,13 +161,13 @@ pnpm dev --fixture
 
 `pnpm verify` 按构建 → 类型检查 → 打包 → 测试执行。类型检查需要构建生成的 Remote 声明，Loader 测试需要当前版本安装包；Host 和 Client 测试分别接受类型检查，与生产源码一并验证。
 
-演示环境使用 `.dev/review-0.2.1/home`，默认端口为 `3085`，可用 `--port=3087` 指定其他端口。启动时输出本地认证地址。`--fixture` 创建演示项目和会话，验证存储与搜索，不调用模型。
+演示环境使用 `.dev/review-0.2.2/home`，默认端口为 `3085`，可用 `--port=3087` 指定其他端口。启动时输出本地认证地址。`--fixture` 创建演示项目和会话，验证存储与搜索，不调用模型。
 
 进行浏览器启停检查时，准备数据后先停止进程，再运行 `pnpm dev --installed --port=3087`，不加 `--fixture`。夹具具有独立的私有包边界，避免 DSH 从夹具发现源码 Client。自动化测试使用独立数据目录和正式发布的原版 DSH CLI。
 
 安装包与源码 ZIP 输出到 `dist/`。源码打包遵守根目录及嵌套忽略规则，解压后没有 `.git` 也可构建。本地 profile、会话、凭据、缓存、日志和开发记录不进入安装包或源码包；公开截图使用演示数据。
 
-详见[验证记录](docs/validation.md)与[发布流程](docs/release.md)。
+详见[验证记录](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/docs/validation.md)与[发布流程](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/docs/release.md)。
 
 </details>
 
@@ -180,6 +182,6 @@ pnpm dev --fixture
 
 ## 反馈与许可证
 
-[反馈问题](https://github.com/MakerFlyFly/DSH-better-classifier/issues) · [更新日志](CHANGELOG.md) · [验证记录](docs/validation.md) · [分发状态](docs/distribution.md)
+[反馈问题](https://github.com/MakerFlyFly/DSH-better-classifier/issues) · [更新日志](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/CHANGELOG.md) · [验证记录](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/docs/validation.md) · [分发状态](https://github.com/MakerFlyFly/DSH-better-classifier/blob/main/docs/distribution.md)
 
-[MIT](LICENSE)。界面适配代码基于 MIT 许可的 DeepSeek Harness，见[第三方许可说明](THIRD_PARTY_NOTICES.md)。
+[MIT](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/LICENSE)。界面适配代码基于 MIT 许可的 DeepSeek Harness，见[第三方许可说明](https://github.com/MakerFlyFly/DSH-better-classifier/blob/v0.2.2/THIRD_PARTY_NOTICES.md)。

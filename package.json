@@ -1,7 +1,7 @@
 {
   "name": "dsh-better-classifier",
-  "version": "0.2.1",
-  "description": "DSH 的分层会话分类、自定义标签与树形搜索插件",
+  "version": "0.2.2",
+  "description": "Organize DSH Web projects and conversations with nested folders, colored tags, and tree-shaped search.",
   "type": "module",
   "license": "MIT",
   "packageManager": "pnpm@11.28.5",
