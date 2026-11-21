@@ -26,7 +26,7 @@ This round adds one application to the main community index. Existing listings k
 
 | Channel | Observed state and action |
 | --- | --- |
-| Main community index / awesome-dsh-plugin.com / dshmarket.com | [PR #17641](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/17641) submitted for 0.2.2. Upstream CI is running; maintainer review and public inclusion are pending. |
+| Main community index / awesome-dsh-plugin.com / dshmarket.com | [PR #17641](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/17641) submitted for 0.2.2. The [complete PR check](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/actions/runs/44931830909) and [Submission gate](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/runs/136941531591) passed. Maintainer review, merge and public inclusion are pending. |
 | Workshop / dsh-market.com | [PR #108](https://github.com/zhu1090093659/dsh-community-plugins/pull/108) was merged on 2026-11-15. The entry is present in the [production manifest](https://dsh-market.com/manifest/plugins.json), referring to the unpinned npm package name. No new application needed. |
 | DSH Plugin Hub / dsh-plugin.org | [Issue #773](https://github.com/dshplugin/dsh-plugin-hub/issues/773) was accepted. The entry is present in the [live English catalogue](https://api.dsh-plugin.org/plugins.en.json); its displayed release was v0.2.1 at this check, with an unpinned npm install command. Leave normal synchronization in place. |
 | Open Plugin Market / dshopen.org | [Issue #486](https://github.com/polang233/dsh-plugin-index/issues/486) was completed. The [public index](https://dshopen.org/index.json) contains the reviewed 0.2.1 entry. This does not establish review of 0.2.2; no new review request was sent. |
@@ -45,7 +45,7 @@ Rules were checked against upstream commit `953a390d942709fb42f827a4f9cbf817f1a3
 | Valid, nonduplicate entry | Exactly one `data/plugins/MakerFlyFly__DSH-better-classifier.yml` file added; `session` category, factual English/Chinese descriptions, no existing entry/issue/PR for the same repository. No generated README or other plugin entry changed. |
 | Download and imagery | Fixed 0.2.2 GitHub Release tarball and declared JPEG return HTTP 200. Root `screenshots.json` meets the documented image rules. No unsupported SVG tile, manual npm mapping, or legacy screenshot entry was added. |
 | Local schema and metadata gate | `readEntries`/`validateEntries`: 12,498 entries, zero errors. `check-submission`: one checked entry, zero failures and zero incomplete checks. |
-| Related checks | 30 upstream regression tests passed; `git diff --check` passed. Full README regeneration, awesome-lint and site build run in the upstream PR workflow, as documented for YAML-only submissions. |
+| Related checks | 30 upstream regression tests and `git diff --check` passed locally. Upstream CI also passed README regeneration, awesome-lint, regression tests and the full site build. Its separate Submission gate passed for PR head `60d289473766e0850b301cec018018576cd0e7c4`. |
 
 ## Historical 0.2.1 catalogue submissions
 
