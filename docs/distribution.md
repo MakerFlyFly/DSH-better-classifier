@@ -20,15 +20,42 @@ Package: `dsh-better-classifier` · Published: `0.2.2` · Repository: [MakerFlyF
 
 Public downloads use GitHub Release assets or npm. Actions archives retain the existing 14-day policy and are only build-transfer artifacts; their expiry does not remove the published Release attachments. The 0.2.2 download and image links contain no temporary signed CDN URLs.
 
+## Catalogue status checked on 2026-11-22
+
+This round adds one application to the main community index. Existing listings keep their normal update process: no duplicate submission, version reminder, or new review request was sent to the other markets. No plugin/package changes or new release were made for this submission.
+
+| Channel | Observed state and action |
+| --- | --- |
+| Main community index / awesome-dsh-plugin.com / dshmarket.com | [PR #17641](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/17641) submitted for 0.2.2. Upstream CI is running; maintainer review and public inclusion are pending. |
+| Workshop / dsh-market.com | [PR #108](https://github.com/zhu1090093659/dsh-community-plugins/pull/108) was merged on 2026-11-15. The entry is present in the [production manifest](https://dsh-market.com/manifest/plugins.json), referring to the unpinned npm package name. No new application needed. |
+| DSH Plugin Hub / dsh-plugin.org | [Issue #773](https://github.com/dshplugin/dsh-plugin-hub/issues/773) was accepted. The entry is present in the [live English catalogue](https://api.dsh-plugin.org/plugins.en.json); its displayed release was v0.2.1 at this check, with an unpinned npm install command. Leave normal synchronization in place. |
+| Open Plugin Market / dshopen.org | [Issue #486](https://github.com/polang233/dsh-plugin-index/issues/486) was completed. The [public index](https://dshopen.org/index.json) contains the reviewed 0.2.1 entry. This does not establish review of 0.2.2; no new review request was sent. |
+| DSH Market / dsh.market | [Issue #382](https://github.com/2BingLing/dsh-market/issues/382) was completed with a listing confirmation. The entry is present in the [published data](https://dsh.market/plugins.json); the captured install command still names 0.2.1. Leave the periodic refresh in place. |
+
+The existing Radar PR and the deferred channels below were not changed. Submission, CI success, maintainer approval, merge, and appearance in a public catalogue remain separate states.
+
+### Main-index submission preflight
+
+Rules were checked against upstream commit `953a390d942709fb42f827a4f9cbf817f1a3640e`: the full [contribution guide](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/953a390d942709fb42f827a4f9cbf817f1a3640e/contributing.md), [PR template](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/953a390d942709fb42f827a4f9cbf817f1a3640e/.github/pull_request_template.md), and relevant CI/gate requirements. No AGENTS.md files were present in that tree. No exception was inferred from another submission's acceptance.
+
+| Requirement | Evidence and result |
+| --- | --- |
+| Public, active repository; minimum age; discovery topic | GitHub confirms a public, non-archived repository created 2026-11-13T11:18:21Z with `dsh-plugin`. The one-day age requirement is met; the guide has no commit-count floor. |
+| Real, installable DSH bundle | Root `dsh.bundle.patch` and the included `cordis.patch.yml`, prebuilt Host/Client entries, MIT license, matching npm repository identity, and the verified 0.2.2 installation above. Official runtime packages are peers. |
+| Valid, nonduplicate entry | Exactly one `data/plugins/MakerFlyFly__DSH-better-classifier.yml` file added; `session` category, factual English/Chinese descriptions, no existing entry/issue/PR for the same repository. No generated README or other plugin entry changed. |
+| Download and imagery | Fixed 0.2.2 GitHub Release tarball and declared JPEG return HTTP 200. Root `screenshots.json` meets the documented image rules. No unsupported SVG tile, manual npm mapping, or legacy screenshot entry was added. |
+| Local schema and metadata gate | `readEntries`/`validateEntries`: 12,498 entries, zero errors. `check-submission`: one checked entry, zero failures and zero incomplete checks. |
+| Related checks | 30 upstream regression tests passed; `git diff --check` passed. Full README regeneration, awesome-lint and site build run in the upstream PR workflow, as documented for YAML-only submissions. |
+
 ## Historical 0.2.1 catalogue submissions
 
-This round updated GitHub and npm only. The following table retains the submission snapshot checked on 2026-11-14; it was not refreshed for this release and does not establish current catalogue status or review of 0.2.2. No new catalogue application or review request was sent.
+The 0.2.2 package-release round updated GitHub and npm only, before the later main-index application recorded above. The following table preserves the 2026-11-14 submission snapshot; it does not establish current catalogue status or review of 0.2.2. No catalogue application or review request was sent as part of that package-release round.
 
 On 2026-11-14, five catalogue applications had been submitted, the main community index entry was prepared while waiting for the repository-age requirement, and the `dsh-plugin` discovery topic had been restored. Submission alone did not establish acceptance or installation certification.
 
 | Channel | Status |
 | --- | --- |
-| [Main community index](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md) | One `session` YAML entry prepared, pointing to the pinned 0.2.1 Release tarball. Upstream entry validation passed. **Not submitted yet:** the repository reaches 24 hours at 2026-11-14 11:18:21 UTC; submit at or after 19:19 Asia/Kuala_Lumpur. This index supplies awesome-dsh-plugin.com and dshmarket.com. |
+| [Main community index](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md) | At the 2026-11-14 check, one `session` entry was prepared with the pinned 0.2.1 tarball but had not been submitted. The repository-age gate became satisfied at 2026-11-14 11:18:21 UTC. See the later 0.2.2 submission above for the current application. |
 | [Workshop / dsh-market.com](https://github.com/zhu1090093659/dsh-community-plugins) | [PR #108](https://github.com/zhu1090093659/dsh-community-plugins/pull/108) open, awaiting review. Local checks passed. [Upstream CI](https://github.com/zhu1090093659/dsh-community-plugins/actions/runs/43542547267) requires maintainer approval to run (`action_required`); reviewer routing passed. Merge and downstream Workshop integration are not yet confirmed. |
 | [DSH Plugin Hub / dsh-plugin.org](https://dsh-plugin.org/zh/submit) | [Issue #773](https://github.com/dshplugin/dsh-plugin-hub/issues/773) submitted, awaiting review; no verified/listed status claimed. |
 | [Open Plugin Market / dshopen.org](https://github.com/polang233/dsh-plugin-index/blob/main/.github/CONTRIBUTING.md) | [Issue #486](https://github.com/polang233/dsh-plugin-index/issues/486) submitted for review of the published npm package. No entry was found in its public index before submission. |
