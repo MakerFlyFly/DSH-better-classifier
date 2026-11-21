@@ -11,7 +11,7 @@
 </div>
 
 <p align="center">
-  <img src="detail/sidebar.jpg" width="420" alt="Nested folders and conversation tags in the DSH sidebar, using demonstration data" />
+  <img src="detail/sidebar-en.png" width="420" alt="English sidebar showing nested folders, colored tags, and the New folder menu with demonstration data" />
 </p>
 
 ## Highlights
