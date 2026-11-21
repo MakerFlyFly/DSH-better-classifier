@@ -4,7 +4,7 @@ The package version in `package.json` determines tarball, source ZIP, validation
 
 1. Update the version and changelog, then run the locked install, build, typecheck, package, and test commands documented in the README.
 2. Validate changed behavior and documentation in the browser, using the pinned stock DSH version and synthetic data where applicable, and update `docs/validation.md`. For documentation-only releases, record the unchanged-runtime comparison and new packaging/install/display checks separately from historical functional tests.
-3. Push the reviewed commit to `main` and wait for Windows CI to pass, then tag that exact commit as `v<version>`.
+3. Push the reviewed commit to a release branch and dispatch Windows CI for that branch. After it passes, fast-forward `main` and create `v<version>` at the same verified commit; push `main` and the tag atomically so fixed-tag image links are available when the README changes. If `main` has advanced, integrate those changes and rerun CI before tagging.
 4. Dispatch `publish.yml` from that tag with `dry_run: false`. After its build, typecheck, package, and tests pass, it uploads `npm-release-<commit>` before publishing the same tarball through npm trusted publishing.
 5. Download that workflow artifact and create a GitHub Release draft with the files listed in `release-manifest.json`. Do not substitute a separate local or Windows rebuild: CSS export ordering and build paths can change archive bytes.
 6. Verify registry installation in stock DSH and compare the npm tarball and Release draft asset SHA-256 with the workflow checksum. Publish the Release only after those checks pass, then record confirmed links in `docs/distribution.md` without moving the release tag.

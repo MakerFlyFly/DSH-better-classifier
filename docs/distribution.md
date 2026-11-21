@@ -1,15 +1,33 @@
 # Distribution status / 分发状态
 
-Package: `dsh-better-classifier` · Published: `0.2.1` · Repository: [MakerFlyFly/DSH-better-classifier](https://github.com/MakerFlyFly/DSH-better-classifier)
+Package: `dsh-better-classifier` · Published: `0.2.2` · Repository: [MakerFlyFly/DSH-better-classifier](https://github.com/MakerFlyFly/DSH-better-classifier)
 
-Release `0.2.2` is being prepared to synchronize npm documentation and English imagery. It changes no runtime behavior or compatibility requirement. This round publishes only to GitHub and npm; the catalogue records below describe earlier 0.2.1 submissions and do not establish review of 0.2.2.
+0.2.2 is published on GitHub and npm, verified on 2026-11-22 (Asia/Kuala_Lumpur). It synchronizes the bilingual README layout, English imagery and release metadata without changing runtime behavior, dependencies, APIs, storage format or stock DSH 0.2.2-rc.2 compatibility.
 
-0.2.1 is available on GitHub and npm. Publication, archive identity, and registry installation were verified on 2026-11-14 (Asia/Kuala_Lumpur). Five catalogue applications were submitted on 2026-11-14; the main community index entry is prepared but is waiting for its repository-age requirement. The `dsh-plugin` discovery topic has been restored. No catalogue acceptance or installation certification is implied by these submissions.
+## 0.2.2 release verification
 
 | Channel | Status |
 | --- | --- |
-| GitHub source and Release | [v0.2.1 published](https://github.com/MakerFlyFly/DSH-better-classifier/releases/tag/v0.2.1); [Windows CI passed](https://github.com/MakerFlyFly/DSH-better-classifier/actions/runs/43459769538) |
-| npm | [0.2.1 published](https://www.npmjs.com/package/dsh-better-classifier/v/0.2.1), `latest` is `0.2.1`; [trusted-publishing workflow passed](https://github.com/MakerFlyFly/DSH-better-classifier/actions/runs/43460301031) with provenance |
+| GitHub source and Release | [v0.2.2 published](https://github.com/MakerFlyFly/DSH-better-classifier/releases/tag/v0.2.2); [Windows preflight CI passed](https://github.com/MakerFlyFly/DSH-better-classifier/actions/runs/44927430435) and [main CI passed](https://github.com/MakerFlyFly/DSH-better-classifier/actions/runs/44927730034) for the release commit. |
+| npm | [0.2.2 published](https://www.npmjs.com/package/dsh-better-classifier/v/0.2.2), `latest` is `0.2.2`; [trusted-publishing workflow passed](https://github.com/MakerFlyFly/DSH-better-classifier/actions/runs/44927732148) with provenance. |
+
+- Release source commit: `5f7eec154940cec83b5621b212683e932cfa75c2`, referenced by `v0.2.2`. The user's latest English and Chinese README deletions were preserved before tagging.
+- Local verification and both release CI paths passed build, production/test typechecking, packaging, and the existing 108 tests. Runtime source, tests, dependencies, bundle configuration and build/publish scripts are unchanged from `v0.2.1`.
+- The publish workflow artifact, npm download and public GitHub installation archive share SHA-256 `58e077cbeb5db0700327d876881dc3d11a351457f1c09b78b36a42ae0547c769`. All five uploaded Release assets were downloaded and compared byte for byte with the workflow artifact before publication; the public installation URL was downloaded and checked again afterward.
+- Installing `dsh-better-classifier@0.2.2` from npm through the formal stock DSH 0.2.2-rc.2 CLI passed Host startup, removal/reinstallation, restart, metadata retention, revision-conflict and candidate-filtered SQLite search checks in an isolated Windows profile. Installed Client bytes matched the workflow tarball.
+- npm's registered README matches the release source. Its 0.2.2 page renders the English screenshot at the intended width and links to the Chinese README at the same tag; the package includes both language images and the updated English detail page. The npm summary is English. Default npm pages may briefly cache the preceding version after publication; the fixed version URL identifies this release.
+- GitHub Release publication completed at `2026-11-21T17:09:13Z` (2026-11-22 01:09:13 Asia/Kuala_Lumpur). The existing `v0.2.1` tag object and installation archive digest remain unchanged. Published tag snapshots retain their build-time status; this document on `main` records subsequent verification.
+
+Public downloads use GitHub Release assets or npm. Actions archives retain the existing 14-day policy and are only build-transfer artifacts; their expiry does not remove the published Release attachments. The 0.2.2 download and image links contain no temporary signed CDN URLs.
+
+## Historical 0.2.1 catalogue submissions
+
+This round updated GitHub and npm only. The following table retains the submission snapshot checked on 2026-11-14; it was not refreshed for this release and does not establish current catalogue status or review of 0.2.2. No new catalogue application or review request was sent.
+
+On 2026-11-14, five catalogue applications had been submitted, the main community index entry was prepared while waiting for the repository-age requirement, and the `dsh-plugin` discovery topic had been restored. Submission alone did not establish acceptance or installation certification.
+
+| Channel | Status |
+| --- | --- |
 | [Main community index](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md) | One `session` YAML entry prepared, pointing to the pinned 0.2.1 Release tarball. Upstream entry validation passed. **Not submitted yet:** the repository reaches 24 hours at 2026-11-14 11:18:21 UTC; submit at or after 19:19 Asia/Kuala_Lumpur. This index supplies awesome-dsh-plugin.com and dshmarket.com. |
 | [Workshop / dsh-market.com](https://github.com/zhu1090093659/dsh-community-plugins) | [PR #108](https://github.com/zhu1090093659/dsh-community-plugins/pull/108) open, awaiting review. Local checks passed. [Upstream CI](https://github.com/zhu1090093659/dsh-community-plugins/actions/runs/43542547267) requires maintainer approval to run (`action_required`); reviewer routing passed. Merge and downstream Workshop integration are not yet confirmed. |
 | [DSH Plugin Hub / dsh-plugin.org](https://dsh-plugin.org/zh/submit) | [Issue #773](https://github.com/dshplugin/dsh-plugin-hub/issues/773) submitted, awaiting review; no verified/listed status claimed. |
